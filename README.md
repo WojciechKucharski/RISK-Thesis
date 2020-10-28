@@ -1,4 +1,5 @@
-# The Game Of RISK - Engineering Thesis
+# The Game Of RISK
+* Engineering Thesis at Wrocław University of Science and Technology
 
 # Technologies
 
