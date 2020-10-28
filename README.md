@@ -12,6 +12,7 @@
 * Ubuntu 20.04 LTS
 * Socket Server
 # Inspiration
+* `RISK` - popular board game
 ```
 https://en.wikipedia.org/wiki/Risk_(game)
 ```
