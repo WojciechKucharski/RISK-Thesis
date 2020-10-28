@@ -29,14 +29,19 @@ while run:
 
             run = False
         elif event.type == pg.VIDEORESIZE:
-
+            if event.w < 854:
+                event.w = 854
+            if event.h < 480:
+                event.h = 480
             screen = pg.display.set_mode((event.w, event.h), pg.RESIZABLE)
             pg.display.update()
 
         if event.type == pg.KEYDOWN:
 
             if event.key == pg.K_BACKSPACE:
-                pass
+                print("BS")
+            elif event.key == pg.K_RETURN:
+                print("ENTER")
             else:
                 print(event.unicode)
 
