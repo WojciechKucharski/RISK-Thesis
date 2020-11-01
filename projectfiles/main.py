@@ -8,7 +8,6 @@ pg.display.set_caption("The Game of RISK! - Client ")  # window name
 icon = pg.image.load('Data\\Icon\\logo.png')  # loading icon
 pg.display.set_icon(icon)  # setting icon
 pg.mixer.music.load("Data\\Sound\\bg.wav")  # playing music in loop
-nres = (1280-160*2, 720-90*2)
 screen = pg.display.set_mode(nres, pg.RESIZABLE)
 ############################################################################
 
@@ -16,8 +15,8 @@ screen = pg.display.set_mode(nres, pg.RESIZABLE)
 net = Network()
 run = True
 
-f = Facade(nres, screen)
-f.butts.append(button(400,100,200,200,"TEST"))
+f = Facade(screen)
+f.loadmap("map")
 
 while run:
 
@@ -41,7 +40,7 @@ while run:
             if event.key == pg.K_BACKSPACE:
                 print("BS")
             elif event.key == pg.K_RETURN:
-                print("ENTER")
+                print(f.provs[0].name)
             else:
                 print(event.unicode)
 

@@ -10,16 +10,19 @@ class Facade:
     butts   = []
     images  = []
 
-    def __init__(self, nres, screen):
-        Facade.nres = nres
+    def __init__(self, screen):
+        Facade.nres = (1280-160, 720-90)
         Facade.screen = screen
-        self.backscreen = color["black"]
+        self.backscreen = color["beige"]
+
 
     def loadmap(self, mapname):
         self.mapname = mapname
         Facade.images.append(image('Data\\Maps\\' + mapname + '\\' + mapname + '.jpg'))
+        self.mapsize = list(self.images[0].img.get_size())
         for x in connect_csv('Data\\Maps\\' + mapname + '\\' + mapname + '.csv'):
             Facade.provs.append(province(x))
+        self.butts.append(button(self.mapsize[0]+25, 25, 75, 25, "Button", color["green"]))
 
     def drag(self):
         pos = pg.mouse.get_pos()
@@ -36,7 +39,7 @@ class Facade:
             return w/Facade.nres[0]
     @property
     def obj(self):
-        return Facade.players + Facade.provs + Facade.butts + Facade.images
+        return Facade.images + Facade.players + Facade.provs + Facade.butts
 
     def show(self):
         self.screen.fill(self.backscreen)
@@ -63,7 +66,9 @@ class image(Facade):
         temp_img = pg.transform.scale(temp_img, (int(self.scale * self.size[0]), int(self.scale * self.size[1])))
         Facade.screen.blit(temp_img, (0, 0))
 
-    def isOver(self, pos):
+    @property
+    def isOver(self):
+        pos = pg.mouse.get_pos()
         return False
 
 ########################################################################################################################
@@ -77,15 +82,21 @@ class button(Facade):
         self.text = text
         self.color = color
 
-    def isOver(self, pos): #function that tells if mouse is over this object
+    @property
+    def isOver(self): #function that tells if mouse is over this object
+        pos = pg.mouse.get_pos()
         if pos[0] <=(self.X*self.scale + self.dx*self.scale) and pos[0] >= (self.X*self.scale):
             if pos[1] <= (self.Y*self.scale + self.dy*self.scale) and pos[1] >= (self.Y*self.scale):
                 return True
         return False
 
     def show(self): #drawing button
+        if self.isOver:
+            border = color["white"]
+        else:
+            border = color["black"]
         pg.draw.rect(Facade.screen, self.color, (self.X*self.scale, self.Y*self.scale, self.dx*self.scale, self.dy*self.scale), 0) #background rectangle
-        pg.draw.rect(Facade.screen, (0, 0, 0), (self.X*self.scale, self.Y*self.scale, self.dx*self.scale, self.dy*self.scale), 3) #border
+        pg.draw.rect(Facade.screen, border, (self.X*self.scale, self.Y*self.scale, self.dx*self.scale, self.dy*self.scale), 3) #border
         self.drawtext(Facade.screen, self.X*self.scale + self.dx*self.scale/2, self.Y*self.scale + self.dy*self.scale/2, str(self.text), 12*self.scale, (0, 0, 0)) #text
 
 ########################################################################################################################
@@ -108,7 +119,9 @@ class province(Facade):
             return color["gray"]
         return color["green"]
 
-    def isOver(self, pos):
+    @property
+    def isOver(self):
+        pos = pg.mouse.get_pos()
         dx = abs(pos[0] - self.X*self.scale)
         dy = abs(pos[1] - self.Y*self.scale)
         dist = math.sqrt(dx**2+dy**2)
@@ -129,6 +142,9 @@ class province(Facade):
         self.drawtext(Facade.screen,
                  int(self.X*self.scale), int(self.Y*self.scale),
                  str(self.units), 12*self.scale)
+
         if self.HL is not False:
             pg.draw.circle(Facade.screen, self.HL, (int(self.X * self.scale), int(self.Y * self.scale)), int(22*self.scale), int(5*self.scale))
-            self.HL = False
+
+        if self.isOver:
+            pg.draw.circle(Facade.screen, color["white"], (int(self.X * self.scale), int(self.Y * self.scale)), int(22*self.scale), int(5*self.scale))
