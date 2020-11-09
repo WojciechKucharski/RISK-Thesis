@@ -24,6 +24,14 @@ class Facade:
             Facade.provs.append(province(x))
         self.butts.append(button(self.mapsize[0]+25, 25, 75, 25, "Button", color["green"]))
 
+    def reset(self):
+        Facade.screen = None
+        Facade.nres = []
+        Facade.players = []
+        Facade.provs = []
+        Facade.butts = []
+        Facade.images = []
+
     def drag(self):
         pos = pg.mouse.get_pos()
 
@@ -74,16 +82,20 @@ class image(Facade):
 ########################################################################################################################
 
 class button(Facade):
-    def __init__(self, X, Y, dx, dy, text, color = (128, 128, 128)): #button object init, if no color given, GRAY
+    def __init__(self, X, Y, dx, dy, text, color = (128, 128, 128), clickable = True, textonly = False): #button object init, if no color given, GRAY
         self.X = X #left corner X
         self.Y = Y #left corner Y
         self.dx = dx #width
         self.dy = dy #height
         self.text = text
         self.color = color
+        self.clickable = clickable
+        self.textonly = textonly
 
     @property
     def isOver(self): #function that tells if mouse is over this object
+        if self.clickable is False:
+            return False
         pos = pg.mouse.get_pos()
         if pos[0] <=(self.X*self.scale + self.dx*self.scale) and pos[0] >= (self.X*self.scale):
             if pos[1] <= (self.Y*self.scale + self.dy*self.scale) and pos[1] >= (self.Y*self.scale):
@@ -95,8 +107,11 @@ class button(Facade):
             border = color["white"]
         else:
             border = color["black"]
-        pg.draw.rect(Facade.screen, self.color, (self.X*self.scale, self.Y*self.scale, self.dx*self.scale, self.dy*self.scale), 0) #background rectangle
-        pg.draw.rect(Facade.screen, border, (self.X*self.scale, self.Y*self.scale, self.dx*self.scale, self.dy*self.scale), 3) #border
+        if self.textonly:
+            pass
+        else:
+            pg.draw.rect(Facade.screen, self.color, (self.X*self.scale, self.Y*self.scale, self.dx*self.scale, self.dy*self.scale), 0) #background rectangle
+            pg.draw.rect(Facade.screen, border, (self.X*self.scale, self.Y*self.scale, self.dx*self.scale, self.dy*self.scale), 3) #border
         self.drawtext(Facade.screen, self.X*self.scale + self.dx*self.scale/2, self.Y*self.scale + self.dy*self.scale/2, str(self.text), 12*self.scale, (0, 0, 0)) #text
 
 ########################################################################################################################
@@ -131,11 +146,15 @@ class province(Facade):
             return False
 
     def show(self):
+        if self.isOver:
+            border = color["white"]
+        else:
+            border = color["black"]
         pg.draw.circle(Facade.screen,
                        self.getColor(),
                        (int(self.X*self.scale), int(self.Y*self.scale)),
                        int(19*self.scale), 0)
-        pg.draw.circle(Facade.screen, color["black"],
+        pg.draw.circle(Facade.screen, border,
                        (int(self.X*self.scale),
                         int(self.Y*self.scale)), int(20*self.scale),
                        int(3*self.scale))
@@ -143,8 +162,3 @@ class province(Facade):
                  int(self.X*self.scale), int(self.Y*self.scale),
                  str(self.units), 12*self.scale)
 
-        if self.HL is not False:
-            pg.draw.circle(Facade.screen, self.HL, (int(self.X * self.scale), int(self.Y * self.scale)), int(22*self.scale), int(5*self.scale))
-
-        if self.isOver:
-            pg.draw.circle(Facade.screen, color["white"], (int(self.X * self.scale), int(self.Y * self.scale)), int(22*self.scale), int(5*self.scale))
