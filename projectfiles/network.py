@@ -7,7 +7,7 @@ class Network:
         self.server = "25.95.17.180"
         self.port = 5555
         self.addr = (self.server, self.port)
-        self.debug = True
+        self.debug = False
         self.p = self.connect()
 
     def connect(self):

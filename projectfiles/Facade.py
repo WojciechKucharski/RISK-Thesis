@@ -2,6 +2,7 @@ import pygame as pg
 from scratch import *
 import math
 
+
 class Facade:
     screen  = None
     nres    = []
@@ -13,10 +14,9 @@ class Facade:
     def __init__(self, screen):
         Facade.nres = (1280-160, 720-90)
         Facade.screen = screen
-        self.backscreen = color["beige"]
-
 
     def loadmap(self, mapname):
+        self.reset()
         self.mapname = mapname
         Facade.images.append(image('Data\\Maps\\' + mapname + '\\' + mapname + '.jpg'))
         self.mapsize = list(self.images[0].img.get_size())
@@ -24,9 +24,15 @@ class Facade:
             Facade.provs.append(province(x))
         self.butts.append(button(self.mapsize[0]+25, 25, 75, 25, "Button", color["green"]))
 
+    def setlobby(self, nick):
+        self.reset()
+        self.backscreen = color["gray"]
+        self.butts.append(button(100, 100, 800, 75, nick, color["white"], False, False, 5))
+        self.butts.append(button(100, 200, 800, 75, "Create Room", color["purple"], False, False, 4))
+
+
     def reset(self):
-        Facade.screen = None
-        Facade.nres = []
+        self.backscreen = color["beige"]
         Facade.players = []
         Facade.provs = []
         Facade.butts = []
@@ -82,7 +88,7 @@ class image(Facade):
 ########################################################################################################################
 
 class button(Facade):
-    def __init__(self, X, Y, dx, dy, text, color = (128, 128, 128), clickable = True, textonly = False): #button object init, if no color given, GRAY
+    def __init__(self, X, Y, dx, dy, text, color = (128, 128, 128), clickable = True, textonly = False, font_amp = 1): #button object init, if no color given, GRAY
         self.X = X #left corner X
         self.Y = Y #left corner Y
         self.dx = dx #width
@@ -91,6 +97,7 @@ class button(Facade):
         self.color = color
         self.clickable = clickable
         self.textonly = textonly
+        self.font_amp = font_amp
 
     @property
     def isOver(self): #function that tells if mouse is over this object
@@ -112,7 +119,7 @@ class button(Facade):
         else:
             pg.draw.rect(Facade.screen, self.color, (self.X*self.scale, self.Y*self.scale, self.dx*self.scale, self.dy*self.scale), 0) #background rectangle
             pg.draw.rect(Facade.screen, border, (self.X*self.scale, self.Y*self.scale, self.dx*self.scale, self.dy*self.scale), 3) #border
-        self.drawtext(Facade.screen, self.X*self.scale + self.dx*self.scale/2, self.Y*self.scale + self.dy*self.scale/2, str(self.text), 12*self.scale, (0, 0, 0)) #text
+        self.drawtext(Facade.screen, self.X*self.scale + self.dx*self.scale/2, self.Y*self.scale + self.dy*self.scale/2, str(self.text), int(self.font_amp*12*self.scale), (0, 0, 0)) #text
 
 ########################################################################################################################
 

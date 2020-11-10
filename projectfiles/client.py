@@ -5,22 +5,22 @@ from Facade import *
 
 class client:
     def __init__(self):
-        pg.init()
-        pg.display.set_caption("The Game of RISK! - Client ")  # window name
-        icon = pg.image.load('Data\\Icon\\logo.png')  # loading icon
-        pg.display.set_icon(icon)  # setting icon
-        pg.mixer.music.load("Data\\Sound\\bg.wav")  # playing music in loop
+        self.pgInit()
         self.screen = pg.display.set_mode((800, 450), pg.RESIZABLE)
         self.net = Network()
         self.game = Facade(self.screen)
+        self.room_name = "lobby"
+        self.inLobby = True
+        self.nick = "Nick"
+
         self.game.loadmap("map")
 
     def run(self):
-        print(self.net.send("Hello There!"))
+
+        if self.inLobby:
+            self.game.setlobby(self.nick)
+
         for event in pg.event.get():
-
-            self.game.drag()
-
             if event.type == pg.QUIT:
                 return False
 
@@ -32,17 +32,28 @@ class client:
                 self.screen = pg.display.set_mode((event.w, event.h), pg.RESIZABLE)
                 pg.display.update()
 
-            if event.type == pg.KEYDOWN:
+            if self.inLobby:
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_BACKSPACE:
+                        self.nick = self.nick[:-1]
+                    elif event.key == pg.K_RETURN or event.key == pg.K_ESCAPE:
+                        pass
+                    else:
+                        if len(self.nick) <= 10:
+                            self.nick += event.unicode
 
-                if event.key == pg.K_BACKSPACE:
-                    print("BS")
-                elif event.key == pg.K_RETURN:
-                    print(self.game.provs[0].name)
-                else:
-                    print(event.unicode)
 
             if event.type == pg.MOUSEBUTTONDOWN:
                 self.game.click()
+
             self.game.show()
 
         return True
+
+    def pgInit(self):
+        pg.init()
+        pg.display.set_caption("The Game of RISK! - Client ")  # window name
+        icon = pg.image.load('Data\\Icon\\logo.png')  # loading icon
+        pg.display.set_icon(icon)  # setting icon
+        pg.mixer.music.load("Data\\Sound\\bg.wav")  # playing music in loop
+
