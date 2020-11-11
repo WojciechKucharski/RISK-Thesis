@@ -27,6 +27,8 @@ class client:
 
     def run(self):
 
+        self.game.update(self.nick, self.inLobby, self.room_name)
+
         if self.inLobby:
             self.game.setlobby(self.nick)
 
@@ -54,6 +56,7 @@ class client:
 
             if event.type == pg.MOUSEBUTTONDOWN:
                 comm = self.game.click()
+                print(comm)
                 if comm is not None:
                     self.net.send(comm)
 

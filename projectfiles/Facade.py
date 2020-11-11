@@ -12,10 +12,19 @@ class Facade:
     images  = []
     net = []
 
+    nick = []
+    inLobby = []
+    room_name = []
+
     def __init__(self, screen, net):
         Facade.nres = (1280-160, 720-90)
         Facade.screen = screen
         Facade.net = net
+
+    def update(self, nick, inLobby, room_name):
+        Facade.nick = nick
+        Facade.inLobby = inLobby
+        Facade.room_name = room_name
 
     def loadmap(self, mapname):
         self.reset()
@@ -33,9 +42,10 @@ class Facade:
         Facade.butts.append(button(100, 100, 800, 75, nick, color["white"], False, False, 5))
         Facade.butts.append(button(100, 200, 800, 75, "Create Room", color["purple"], True, False, 4, "create"))
         rooms = Facade.net.send("roomlist")
+
         i = 0
         for x in rooms:
-            self.butts.append(button(100, 300 + 75 * i, 800, 50, x, color["green"], False, False, 3))
+            self.butts.append(button(100, 300 + 75 * i, 800, 50, x, color["green"], True, False, 3, x))
             i+=1
 
     def reset(self):
