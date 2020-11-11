@@ -6,14 +6,24 @@ from Facade import *
 class client:
     def __init__(self):
         self.pgInit()
+
+        self.net = self.connect()
         self.screen = pg.display.set_mode((800, 450), pg.RESIZABLE)
-        self.net = Network()
-        self.game = Facade(self.screen)
+        self.game = Facade(self.screen, self.net)
+
         self.room_name = "lobby"
         self.inLobby = True
         self.nick = "Nick"
 
         self.game.loadmap("map")
+
+    def connect(self):
+        while True:
+            net = Network()
+            if net.connected:
+                return net
+            else:
+                print("Failed to connect")
 
     def run(self):
 
@@ -42,9 +52,10 @@ class client:
                         if len(self.nick) <= 10:
                             self.nick += event.unicode
 
-
             if event.type == pg.MOUSEBUTTONDOWN:
-                self.game.click()
+                comm = self.game.click()
+                if comm is not None:
+                    self.net.send(comm)
 
             self.game.show()
 

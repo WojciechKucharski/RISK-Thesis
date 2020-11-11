@@ -10,11 +10,13 @@ class lobby:
     def command(self, command):
         return command_int(self, command)
 
+    def create_room(self, creator):
+        self.rooms.append(game(creator))
 
 class game:
     def __init__(self, creator, mapname = "map"):
-        self.room_name = "LoL"
-        self.mapname = creator + "Room"
+        self.room_name = creator + "'s Room"
+        self.mapname = mapname
         self.players = []
         self.provs = []
 

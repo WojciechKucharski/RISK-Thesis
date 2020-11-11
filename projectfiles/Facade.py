@@ -10,26 +10,33 @@ class Facade:
     provs   = []
     butts   = []
     images  = []
+    net = []
 
-    def __init__(self, screen):
+    def __init__(self, screen, net):
         Facade.nres = (1280-160, 720-90)
         Facade.screen = screen
+        Facade.net = net
 
     def loadmap(self, mapname):
         self.reset()
+
         self.mapname = mapname
         Facade.images.append(image('Data\\Maps\\' + mapname + '\\' + mapname + '.jpg'))
         self.mapsize = list(self.images[0].img.get_size())
         for x in connect_csv('Data\\Maps\\' + mapname + '\\' + mapname + '.csv'):
             Facade.provs.append(province(x))
-        self.butts.append(button(self.mapsize[0]+25, 25, 75, 25, "Button", color["green"]))
+        Facade.butts.append(button(self.mapsize[0]+25, 25, 75, 25, "Button", color["green"]))
 
     def setlobby(self, nick):
         self.reset()
         self.backscreen = color["gray"]
-        self.butts.append(button(100, 100, 800, 75, nick, color["white"], False, False, 5))
-        self.butts.append(button(100, 200, 800, 75, "Create Room", color["purple"], False, False, 4))
-
+        Facade.butts.append(button(100, 100, 800, 75, nick, color["white"], False, False, 5))
+        Facade.butts.append(button(100, 200, 800, 75, "Create Room", color["purple"], True, False, 4, "create"))
+        rooms = Facade.net.send("roomlist")
+        i = 0
+        for x in rooms:
+            self.butts.append(button(100, 300 + 75 * i, 800, 50, x, color["green"], False, False, 3))
+            i+=1
 
     def reset(self):
         self.backscreen = color["beige"]
@@ -39,10 +46,15 @@ class Facade:
         Facade.images = []
 
     def drag(self):
-        pos = pg.mouse.get_pos()
+        pass
 
     def click(self):
-        pos = pg.mouse.get_pos()
+        for x in Facade.provs + Facade.butts:
+            if x.isOver:
+                if x.comm is not None:
+                    return x.comm
+
+        return None
 
     @property
     def scale(self):
@@ -88,7 +100,7 @@ class image(Facade):
 ########################################################################################################################
 
 class button(Facade):
-    def __init__(self, X, Y, dx, dy, text, color = (128, 128, 128), clickable = True, textonly = False, font_amp = 1): #button object init, if no color given, GRAY
+    def __init__(self, X, Y, dx, dy, text, color = (128, 128, 128), clickable = True, textonly = False, font_amp = 1, comm = None): #button object init, if no color given, GRAY
         self.X = X #left corner X
         self.Y = Y #left corner Y
         self.dx = dx #width
@@ -98,6 +110,8 @@ class button(Facade):
         self.clickable = clickable
         self.textonly = textonly
         self.font_amp = font_amp
+        self.comm = comm
+
 
     @property
     def isOver(self): #function that tells if mouse is over this object
@@ -140,7 +154,9 @@ class province(Facade):
         if self.owner == None:
             return color["gray"]
         return color["green"]
-
+    @property
+    def comm(self):
+        return str(self.id)
     @property
     def isOver(self):
         pos = pg.mouse.get_pos()

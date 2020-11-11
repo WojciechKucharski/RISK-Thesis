@@ -2,13 +2,13 @@ import socket
 import pickle
 
 class Network:
-    def __init__(self):
+    def __init__(self, ip = "25.95.17.180", port = 5555):
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server = "25.95.17.180"
-        self.port = 5555
+        self.server = ip
+        self.port = port
         self.addr = (self.server, self.port)
         self.debug = False
-        self.p = self.connect()
+        self.connected = self.connect()
 
     def connect(self):
         try:
@@ -18,11 +18,13 @@ class Network:
                 r = pickle.loads(self.client.recv(2048))
                 print("Recived:")
                 print(len(pickle.dumps(r)), 'bytes')
-                return r
+                self.first_connection = r
+                return True
             else:
                 self.client.connect(self.addr)
                 return pickle.loads(self.client.recv(2048))
         except socket.error as e:
+            return False
             print(e)
 
     def send(self, data):
