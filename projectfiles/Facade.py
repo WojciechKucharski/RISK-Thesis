@@ -200,6 +200,13 @@ class province(Facade):
         else:
             return False
 
+    @property
+    def unitsDIS(self):
+        if self.units == None:
+            return "?"
+        else:
+            return str(self.units)
+
     def show(self):
         if self.isOver:
             border = color["white"]
@@ -215,5 +222,5 @@ class province(Facade):
                        int(3*self.scale))
         self.drawtext(Facade.screen,
                  int(self.X*self.scale), int(self.Y*self.scale),
-                 str(self.units), 12*self.scale)
+                 str(self.unitsDIS), 12*self.scale)
 
