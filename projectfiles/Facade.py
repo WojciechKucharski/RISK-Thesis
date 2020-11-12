@@ -21,32 +21,50 @@ class Facade:
         Facade.screen = screen
         Facade.net = net
 
+    def update_provs(self):
+        for x in Facade.provs:
+            response = self.command(x.comm)
+            x.owner = response[0]
+            x.units = response[1]
+
     def update(self, nick, inLobby, room_name):
         Facade.nick = nick
         Facade.inLobby = inLobby
         Facade.room_name = room_name
 
-    def loadmap(self, mapname):
-        self.reset()
+    def command(self, input):
+        comm = [Facade.nick, Facade.room_name]
+        if type(input) is list:
+            for x in input:
+                comm.append(x)
+        else:
+            comm.append(input)
 
-        self.mapname = mapname
-        Facade.images.append(image('Data\\Maps\\' + mapname + '\\' + mapname + '.jpg'))
+        return Facade.net.send(comm)
+
+    def loadmap(self):
+        self.reset()
+        self.mapname = self.command("mapname")
+        Facade.images.append(image('Data\\Maps\\' + self.mapname + '\\' + self.mapname + '.jpg'))
         self.mapsize = list(self.images[0].img.get_size())
-        for x in connect_csv('Data\\Maps\\' + mapname + '\\' + mapname + '.csv'):
+        for x in connect_csv('Data\\Maps\\' + self.mapname + '\\' + self.mapname + '.csv'):
             Facade.provs.append(province(x))
         Facade.butts.append(button(self.mapsize[0]+25, 25, 75, 25, "Button", color["green"]))
+
 
     def setlobby(self, nick):
         self.reset()
         self.backscreen = color["gray"]
         Facade.butts.append(button(100, 100, 800, 75, nick, color["white"], False, False, 5))
         Facade.butts.append(button(100, 200, 800, 75, "Create Room", color["purple"], True, False, 4, "create"))
-        rooms = Facade.net.send("roomlist")
+        rooms = self.command("roomlist")
 
         i = 0
-        for x in rooms:
-            self.butts.append(button(100, 300 + 75 * i, 800, 50, x, color["green"], True, False, 3, x))
-            i+=1
+        if rooms is not False:
+            for x in rooms:
+                self.butts.append(button(100, 300 + 75 * i, 800, 50, x, color["green"], True, False, 3, x))
+                i+=1
+
 
     def reset(self):
         self.backscreen = color["beige"]
@@ -78,6 +96,7 @@ class Facade:
         return Facade.images + Facade.players + Facade.provs + Facade.butts
 
     def show(self):
+        self.update_provs()
         self.screen.fill(self.backscreen)
         for x in self.obj:
             x.show()
@@ -160,13 +179,16 @@ class province(Facade):
 
         self.owner = None
         self.units = None
+
     def getColor(self):
         if self.owner == None:
             return color["gray"]
         return color["green"]
+
     @property
     def comm(self):
-        return str(self.id)
+        return ["prov", self.id]
+
     @property
     def isOver(self):
         pos = pg.mouse.get_pos()

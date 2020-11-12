@@ -10,6 +10,7 @@ class Network:
         self.debug = False
         self.connected = self.connect()
 
+
     def connect(self):
         try:
             if self.debug:

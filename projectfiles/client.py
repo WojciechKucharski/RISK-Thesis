@@ -7,23 +7,25 @@ class client:
     def __init__(self):
         self.pgInit()
 
-        self.net = self.connect()
-        self.screen = pg.display.set_mode((800, 450), pg.RESIZABLE)
-        self.game = Facade(self.screen, self.net)
-
         self.room_name = "lobby"
         self.inLobby = True
         self.nick = "Nick"
 
-        self.game.loadmap("map")
+        self.net = self.connect()
+
+        self.screen = pg.display.set_mode((800, 450), pg.RESIZABLE)
+        self.game = Facade(self.screen, self.net)
 
     def connect(self):
         while True:
-            net = Network()
+            net = Network("25.95.17.180", 5555)
             if net.connected:
                 return net
             else:
                 print("Failed to connect")
+
+    def command(self, input):
+        return self.game.command(input)
 
     def run(self):
 
@@ -56,9 +58,16 @@ class client:
 
             if event.type == pg.MOUSEBUTTONDOWN:
                 comm = self.game.click()
-                print(comm)
+
                 if comm is not None:
-                    self.net.send(comm)
+                    response = self.command(comm)
+                    if response == self.nick:
+                        self.room_name = response
+                        self.inLobby = False
+                        self.game.update(self.nick, self.inLobby, self.room_name)
+                        self.game.loadmap()
+
+
 
             self.game.show()
 

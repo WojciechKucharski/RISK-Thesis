@@ -1,7 +1,7 @@
 import pygame as pg
 from scratch import *
 from comm_int import *
-
+import random
 
 class lobby:
     def __init__(self):
@@ -13,18 +13,39 @@ class lobby:
     def create_room(self, creator):
         self.rooms.append(game(creator))
 
+    def index(self, room_name):
+        i = 0
+        for x in self.rooms:
+            if x.creator == room_name:
+                return i
+            else:
+                i+=1
+
+
 class game:
     def __init__(self, creator, mapname = "map"):
         self.room_name = creator + "'s Room"
+        self.creator = creator
         self.mapname = mapname
         self.players = []
         self.provs = []
-
-        for x in connect_csv('Data\\Maps\\' + mapname + '\\' + mapname + '.csv'):
+        for x in connect_csv('Data\\Maps\\' + self.mapname + '\\' + self.mapname + '.csv'):
             self.provs.append(province(x))
+        self.addplayer(creator)
 
-    def __str__(self):
-        return
+    def addplayer(self, nick):
+        self.players.append(nick)
+        adding = True
+        while adding:
+            R = random.randint(0, len(self.provs))
+            if self.provs[R].owner == None:
+                self.provs[R].owner = nick
+                self.provs[R].units = 3
+                adding = False
+
+
+
+
 
 class province:
     def __init__(self, data):
