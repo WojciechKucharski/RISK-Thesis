@@ -1,6 +1,5 @@
 def command_int(self, command):
 
-    print(command)
     if len(command) <= 1:
         print("Error")
         return False
@@ -19,11 +18,17 @@ def command_int(self, command):
         return False
     elif command[2] == "mapname":
         return self.rooms[self.index(command[1])].mapname
+
     elif command[2] == "prov":
         a = self.rooms[self.index(command[1])].provs[command[3]].owner
         b = self.rooms[self.index(command[1])].provs[command[3]].units
         return [a, b]
 
+    elif command[2] == "join":
+        print(command[3][:-7])
+
+    elif command[2] =="whereIam":
+        return self.whereIam(command[0])
     else:
         return False
 

@@ -7,14 +7,26 @@ class client:
     def __init__(self):
         self.pgInit()
 
-        self.room_name = "lobby"
-        self.inLobby = True
         self.nick = "Nick"
 
         self.net = self.connect()
 
         self.screen = pg.display.set_mode((800, 450), pg.RESIZABLE)
         self.game = Facade(self.screen, self.net)
+
+        self.map_is_loaded = False
+
+    @property
+    def room_name(self):
+        return self.command("whereIam")
+
+    @property
+    def inLobby(self):
+        X = self.room_name
+        if X == "lobby":
+            return True
+        else:
+            return False
 
     def connect(self):
         while True:
@@ -27,12 +39,39 @@ class client:
     def command(self, input):
         return self.game.command(input)
 
-    def run(self):
-
+    def update(self):
         self.game.update(self.nick, self.inLobby, self.room_name)
 
+    def update_screen(self):
         if self.inLobby:
             self.game.setlobby(self.nick)
+            self.map_is_loaded = False
+        else:
+            if self.map_is_loaded:
+                pass
+            else:
+                self.game.loadmap()
+                self.map_is_loaded = True
+
+    def run(self):
+        self.update()
+
+        cont = self.event_Handler()
+
+        self.update_screen()
+
+        self.game.show()
+
+        return cont
+
+    def pgInit(self):
+        pg.init()
+        pg.display.set_caption("The Game of RISK! - Client ")  # window name
+        icon = pg.image.load('Data\\Icon\\logo.png')  # loading icon
+        pg.display.set_icon(icon)  # setting icon
+        pg.mixer.music.load("Data\\Sound\\bg.wav")  # playing music in loop
+
+    def event_Handler(self):
 
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -45,6 +84,7 @@ class client:
                     event.h = 480
                 self.screen = pg.display.set_mode((event.w, event.h), pg.RESIZABLE)
                 pg.display.update()
+
 
             if self.inLobby:
                 if event.type == pg.KEYDOWN:
@@ -60,23 +100,7 @@ class client:
                 comm = self.game.click()
 
                 if comm is not None:
-                    response = self.command(comm)
-                    if response == self.nick:
-                        self.room_name = response
-                        self.inLobby = False
-                        self.game.update(self.nick, self.inLobby, self.room_name)
-                        self.game.loadmap()
-
-
-
-            self.game.show()
-
+                    response = self.command(comm) #TODO
+                    if not self.inLobby:
+                        self.update()
         return True
-
-    def pgInit(self):
-        pg.init()
-        pg.display.set_caption("The Game of RISK! - Client ")  # window name
-        icon = pg.image.load('Data\\Icon\\logo.png')  # loading icon
-        pg.display.set_icon(icon)  # setting icon
-        pg.mixer.music.load("Data\\Sound\\bg.wav")  # playing music in loop
-

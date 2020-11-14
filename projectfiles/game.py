@@ -13,6 +13,8 @@ class lobby:
     def create_room(self, creator):
         self.rooms.append(game(creator))
 
+
+
     def index(self, room_name):
         i = 0
         for x in self.rooms:
@@ -20,6 +22,17 @@ class lobby:
                 return i
             else:
                 i+=1
+
+    def whereIam(self, nick):
+        if len(self.rooms) == 0:
+            return "lobby"
+        else:
+            for x in self.rooms:
+                if nick in x.players:
+                    return x.creator
+
+            return "lobby"
+
 
 
 class game:

@@ -2,7 +2,7 @@ import pygame as pg
 from scratch import *
 import math
 
-
+########################################################################################################################
 class Facade:
     screen  = None
     nres    = []
@@ -11,7 +11,6 @@ class Facade:
     butts   = []
     images  = []
     net = []
-
     nick = []
     inLobby = []
     room_name = []
@@ -20,6 +19,7 @@ class Facade:
         Facade.nres = (1280-160, 720-90)
         Facade.screen = screen
         Facade.net = net
+        self.backscreen = color["black"]
 
     def update_provs(self):
         for x in Facade.provs:
@@ -39,7 +39,6 @@ class Facade:
                 comm.append(x)
         else:
             comm.append(input)
-
         return Facade.net.send(comm)
 
     def loadmap(self):
@@ -51,7 +50,6 @@ class Facade:
             Facade.provs.append(province(x))
         Facade.butts.append(button(self.mapsize[0]+25, 25, 75, 25, "Button", color["green"]))
 
-
     def setlobby(self, nick):
         self.reset()
         self.backscreen = color["gray"]
@@ -62,7 +60,7 @@ class Facade:
         i = 0
         if rooms is not False:
             for x in rooms:
-                self.butts.append(button(100, 300 + 75 * i, 800, 50, x, color["green"], True, False, 3, x))
+                self.butts.append(button(100, 300 + 75 * i, 800, 50, x, color["green"], True, False, 3, ["join", x]))
                 i+=1
 
 
@@ -224,3 +222,4 @@ class province(Facade):
                  int(self.X*self.scale), int(self.Y*self.scale),
                  str(self.unitsDIS), 12*self.scale)
 
+########################################################################################################################
