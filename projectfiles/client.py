@@ -80,6 +80,7 @@ class client:
 
         for event in pg.event.get():
             if event.type == pg.QUIT:
+                self.command("leave")
                 return False
 
             elif event.type == pg.VIDEORESIZE:

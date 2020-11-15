@@ -1,12 +1,14 @@
 import pygame as pg
 from scratch import *
 import math
+from visuals import *
 
 ########################################################################################################################
 class Facade:
     screen  = None
     nres    = []
     players = []
+    players_list = []
     provs   = []
     butts   = []
     images  = []
@@ -27,6 +29,14 @@ class Facade:
             x.owner = response[0]
             x.units = response[1]
 
+    def update_players(self):
+        Facade.players = []
+        Facade.players_list = self.command("player_list")
+        i = 0
+        for x in Facade.players_list:
+            Facade.players.append(button(self.mapsize[0] + 30, 30 + 50 * i, 125, 35, x, color2[i], False, False, 2))
+            i += 1
+
     def update(self, nick, inLobby, room_name):
         Facade.nick = nick
         Facade.inLobby = inLobby
@@ -42,15 +52,19 @@ class Facade:
         return Facade.net.send(comm)
 
     def loadmap(self):
+
         self.reset()
         self.mapname = self.command("mapname")
         Facade.images.append(image('Data\\Maps\\' + self.mapname + '\\' + self.mapname + '.jpg'))
         self.mapsize = list(self.images[0].img.get_size())
+
         for x in connect_csv('Data\\Maps\\' + self.mapname + '\\' + self.mapname + '.csv'):
             Facade.provs.append(province(x))
-        Facade.butts.append(button(self.mapsize[0]+25, 25, 75, 25, "Button", color["green"]))
+
+
 
     def setlobby(self, nick):
+
         self.reset()
         self.backscreen = color["gray"]
         Facade.butts.append(button(100, 100, 800, 75, nick, color["white"], False, False, 5))
@@ -70,6 +84,7 @@ class Facade:
         Facade.provs = []
         Facade.butts = []
         Facade.images = []
+        Facade.players_list = []
 
     def drag(self):
         pass
@@ -94,6 +109,10 @@ class Facade:
         return Facade.images + Facade.players + Facade.provs + Facade.butts
 
     def show(self):
+        if Facade.inLobby:
+            pass
+        else:
+            self.update_players()
         self.update_provs()
         self.screen.fill(self.backscreen)
         for x in self.obj:
@@ -139,7 +158,6 @@ class button(Facade):
         self.font_amp = font_amp
         self.comm = comm
 
-
     @property
     def isOver(self): #function that tells if mouse is over this object
         if self.clickable is False:
@@ -179,9 +197,11 @@ class province(Facade):
         self.units = None
 
     def getColor(self):
-        if self.owner == None:
+
+        if self.owner in Facade.players_list:
+            return color2[Facade.players_list.index(self.owner)]
+        else:
             return color["gray"]
-        return color["green"]
 
     @property
     def comm(self):
@@ -189,12 +209,24 @@ class province(Facade):
 
     @property
     def isOver(self):
+        if self.visible is False:
+            return False
         pos = pg.mouse.get_pos()
         dx = abs(pos[0] - self.X*self.scale)
         dy = abs(pos[1] - self.Y*self.scale)
         dist = math.sqrt(dx**2+dy**2)
         if dist <= 20*self.scale:
             return True
+        else:
+            return False
+
+    @property
+    def visible(self):
+        if self.owner == Facade.nick:
+            return True
+        for x in self.con:
+            if Facade.provs[x].owner == Facade.nick:
+                return True
         else:
             return False
 
@@ -206,6 +238,10 @@ class province(Facade):
             return str(self.units)
 
     def show(self):
+        if self.visible:
+            self.show2()
+
+    def show2(self):
         if self.isOver:
             border = color["white"]
         else:
@@ -221,5 +257,6 @@ class province(Facade):
         self.drawtext(Facade.screen,
                  int(self.X*self.scale), int(self.Y*self.scale),
                  str(self.unitsDIS), 12*self.scale)
+
 
 ########################################################################################################################

@@ -25,7 +25,8 @@ def command_int(self, command):
             return False
 
         elif command[2] == "join":
-            print(command[3][:-7])
+            print(command)
+            self.rooms[self.index(command[3][:-7])].addplayer(command[0])
 
 ########################################################################################################################
     else:
@@ -36,6 +37,12 @@ def command_int(self, command):
             a = self.rooms[self.index(command[1])].provs[command[3]].owner
             b = self.rooms[self.index(command[1])].provs[command[3]].units
             return [a, b]
+        elif command[2] == "player_list":
+            return self.rooms[self.index(command[1])].players
+        elif command[2] == "leave":
+            self.rooms[self.index(command[1])].rmplayer(command[0])
+            self.clear_rooms()
+
 ########################################################################################################################
 
     return False
