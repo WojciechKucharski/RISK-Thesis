@@ -24,16 +24,17 @@ def threaded_client(conn):
 
     while True:
 
-        if True: #TRY
+        try: #TRY
 
             data = pickle.loads(conn.recv(2048))
             if not data:
                 break
             else:
                 pass
+            print(data)
             conn.sendall(pickle.dumps(G.command(data)))
 
-        else:#EXCEPT Exception as e:
+        except Exception as e:#EXCEPT Exception as e:
             print(e)
             break
 

@@ -55,8 +55,8 @@ class Facade:
         self.backscreen = color["gray"]
         Facade.butts.append(button(100, 100, 800, 75, nick, color["white"], False, False, 5))
         Facade.butts.append(button(100, 200, 800, 75, "Create Room", color["purple"], True, False, 4, "create"))
-        rooms = self.command("roomlist")
 
+        rooms = self.command("roomlist")
         i = 0
         if rooms is not False:
             for x in rooms:

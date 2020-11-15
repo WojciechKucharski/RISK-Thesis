@@ -18,7 +18,11 @@ class client:
 
     @property
     def room_name(self):
-        return self.command("whereIam")
+        name = self.command("whereIam")
+        if name is False:
+            return "lobby"
+        else:
+            return name
 
     @property
     def inLobby(self):
@@ -43,10 +47,11 @@ class client:
         self.game.update(self.nick, self.inLobby, self.room_name)
 
     def update_screen(self):
+        self.update()
         if self.inLobby:
             self.game.setlobby(self.nick)
             self.map_is_loaded = False
-        else:
+        elif not self.inLobby:
             if self.map_is_loaded:
                 pass
             else:
