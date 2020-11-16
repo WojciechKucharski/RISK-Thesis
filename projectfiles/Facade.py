@@ -17,11 +17,15 @@ class Facade:
     inLobby = []
     room_name = []
 
+    my_state = None
+
     def __init__(self, screen, net):
         Facade.nres = (1280-160, 720-90)
         Facade.screen = screen
         Facade.net = net
         self.backscreen = color["black"]
+
+
 
     def update_provs(self):
         for x in Facade.provs:
@@ -41,6 +45,10 @@ class Facade:
         Facade.nick = nick
         Facade.inLobby = inLobby
         Facade.room_name = room_name
+        if inLobby:
+            self.setlobby(nick)
+        elif not inLobby:
+            self.loadmap()
 
     def command(self, input):
         comm = [Facade.nick, Facade.room_name]
@@ -52,7 +60,6 @@ class Facade:
         return Facade.net.send(comm)
 
     def loadmap(self):
-
         self.reset()
         self.mapname = self.command("mapname")
         Facade.images.append(image('Data\\Maps\\' + self.mapname + '\\' + self.mapname + '.jpg'))
@@ -64,7 +71,6 @@ class Facade:
 
 
     def setlobby(self, nick):
-
         self.reset()
         self.backscreen = color["gray"]
         Facade.butts.append(button(100, 100, 800, 75, nick, color["white"], False, False, 5))
@@ -85,17 +91,19 @@ class Facade:
         Facade.butts = []
         Facade.images = []
         Facade.players_list = []
+        Facade.my_state = None
 
     def drag(self):
         pass
 
     def click(self):
+        comm = None
         for x in Facade.provs + Facade.butts:
             if x.isOver:
                 if x.comm is not None:
-                    return x.comm
-
-        return None
+                    comm = x.comm
+        if comm is not None:
+            response = self.command(comm)  # TODO
 
     @property
     def scale(self):

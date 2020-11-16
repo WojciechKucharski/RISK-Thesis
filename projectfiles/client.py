@@ -6,15 +6,10 @@ from Facade import *
 class client:
     def __init__(self):
         self.pgInit()
-
         self.nick = "Nick"
-
         self.net = self.connect()
-
         self.screen = pg.display.set_mode((800, 450), pg.RESIZABLE)
         self.game = Facade(self.screen, self.net)
-
-        self.map_is_loaded = False
 
     @property
     def room_name(self):
@@ -26,11 +21,23 @@ class client:
 
     @property
     def inLobby(self):
-        X = self.room_name
-        if X == "lobby":
+        if self.room_name == "lobby":
             return True
         else:
             return False
+
+    def run(self):
+        self.update()
+        self.game.show()
+        return self.event_Handler()
+
+########################################################################################################################
+
+    def update(self):
+        self.game.update(self.nick, self.inLobby, self.room_name)
+
+    def command(self, input):
+        return self.game.command(input)
 
     def connect(self):
         while True:
@@ -40,44 +47,7 @@ class client:
             else:
                 print("Failed to connect")
 
-    def command(self, input):
-        return self.game.command(input)
-
-    def update(self):
-        self.game.update(self.nick, self.inLobby, self.room_name)
-
-    def update_screen(self):
-        self.update()
-        if self.inLobby:
-            self.game.setlobby(self.nick)
-            self.map_is_loaded = False
-        elif not self.inLobby:
-            if self.map_is_loaded:
-                pass
-            else:
-                self.game.loadmap()
-                self.map_is_loaded = True
-
-    def run(self):
-        self.update()
-
-        cont = self.event_Handler()
-
-        self.update_screen()
-
-        self.game.show()
-
-        return cont
-
-    def pgInit(self):
-        pg.init()
-        pg.display.set_caption("The Game of RISK! - Client ")  # window name
-        icon = pg.image.load('Data\\Icon\\logo.png')  # loading icon
-        pg.display.set_icon(icon)  # setting icon
-        pg.mixer.music.load("Data\\Sound\\bg.wav")  # playing music in loop
-
     def event_Handler(self):
-
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 self.command("leave")
@@ -91,6 +61,8 @@ class client:
                 self.screen = pg.display.set_mode((event.w, event.h), pg.RESIZABLE)
                 pg.display.update()
 
+            if event.type == pg.MOUSEBUTTONDOWN:
+                self.game.click()
 
             if self.inLobby:
                 if event.type == pg.KEYDOWN:
@@ -101,12 +73,11 @@ class client:
                     else:
                         if len(self.nick) <= 10:
                             self.nick += event.unicode
-
-            if event.type == pg.MOUSEBUTTONDOWN:
-                comm = self.game.click()
-
-                if comm is not None:
-                    response = self.command(comm) #TODO
-                    if not self.inLobby:
-                        self.update()
         return True
+
+    def pgInit(self):
+        pg.init()
+        pg.display.set_caption("The Game of RISK! - Client ")  # window name
+        icon = pg.image.load('Data\\Icon\\logo.png')  # loading icon
+        pg.display.set_icon(icon)  # setting icon
+        pg.mixer.music.load("Data\\Sound\\bg.wav")  # playing music in loop

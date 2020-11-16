@@ -49,11 +49,12 @@ class game:
 
         self.turn = creator
         self.game_started = False
+
         self.HL = None
         self.HL2 = None
         self.turn_time = 0
 
-        self.player_state = -1
+        self.player_state = 0
 
     @property
     def n_players(self):
@@ -84,6 +85,14 @@ class game:
 
     def rmplayer(self, nick):
         self.players.remove(nick)
+
+    def myState(self, nick):
+        if self.game_started == False:
+            return 0
+        elif self.myTurn(nick) is False:
+            return 1
+        else:
+            return self.player_state
 
 class province:
     def __init__(self, data):
