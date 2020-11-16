@@ -49,6 +49,11 @@ class Facade:
             self.setlobby(nick)
         elif not inLobby:
             self.loadmap()
+        if Facade.inLobby:
+            pass
+        else:
+            self.update_players()
+        self.update_provs()
 
     def command(self, input):
         comm = [Facade.nick, Facade.room_name]
@@ -80,7 +85,7 @@ class Facade:
         i = 0
         if rooms is not False:
             for x in rooms:
-                self.butts.append(button(100, 300 + 75 * i, 800, 50, x, color["green"], True, False, 3, ["join", x]))
+                self.butts.append(button(100, 300 + 75 * i, 800, 50, x, color["green"], True, False, 3, ["join", x[:-7]]))
                 i+=1
 
 
@@ -117,11 +122,6 @@ class Facade:
         return Facade.images + Facade.players + Facade.provs + Facade.butts
 
     def show(self):
-        if Facade.inLobby:
-            pass
-        else:
-            self.update_players()
-        self.update_provs()
         self.screen.fill(self.backscreen)
         for x in self.obj:
             x.show()

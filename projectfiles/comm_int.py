@@ -26,7 +26,7 @@ def command_int(self, command):
 
         elif command[2] == "join":
             print(command)
-            self.rooms[self.index(command[3][:-7])].addplayer(command[0])
+            self.rooms[self.index(command[3])].addplayer(command[0])
 
 ########################################################################################################################
     else:

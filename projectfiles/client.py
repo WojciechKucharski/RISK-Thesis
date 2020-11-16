@@ -29,7 +29,7 @@ class client:
     def run(self):
         self.update()
         self.game.show()
-        return self.event_Handler()
+        return self.eventHandler()
 
 ########################################################################################################################
 
@@ -41,13 +41,13 @@ class client:
 
     def connect(self):
         while True:
-            net = Network("25.95.17.180", 5555)
+            net = Network("25.95.17.180", 5555) #TODO
             if net.connected:
                 return net
             else:
                 print("Failed to connect")
 
-    def event_Handler(self):
+    def eventHandler(self):
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 self.command("leave")
