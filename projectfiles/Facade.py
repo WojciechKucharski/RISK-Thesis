@@ -54,7 +54,7 @@ class Facade:
     def obj(self):
         return Facade.images + Facade.provs + Facade.butts
 
-
+########################################################################################################################
 
     def update_provs(self):
         for x in Facade.provs:
@@ -121,6 +121,8 @@ class Facade:
         Facade.butts = []
         Facade.images = []
         Facade.players_list = []
+
+########################################################################################################################
 
     def click(self):
         comm = None
