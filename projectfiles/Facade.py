@@ -7,23 +7,52 @@ from visuals import *
 class Facade:
     screen  = None
     nres    = []
-    players = []
     players_list = []
     provs   = []
     butts   = []
     images  = []
     net = []
     nick = []
-    inLobby = []
-    room_name = []
-
-    my_state = None
 
     def __init__(self, screen, net):
         Facade.nres = (1280-160, 720-90)
         Facade.screen = screen
         Facade.net = net
         self.backscreen = color["black"]
+
+    @property
+    def room_name(self):
+        name = self.command("whereIam")
+        if name is False:
+            return "lobby"
+        else:
+            return name
+
+    @property
+    def inLobby(self):
+        if self.room_name == "lobby":
+            return True
+        else:
+            return False
+
+    @property
+    def myState(self):
+        if self.inLobby:
+            return -1
+        else:
+            return self.command("myState")
+
+    @property
+    def scale(self):
+        w, h = pg.display.get_surface().get_size()
+        if w/h >= 16.0/9.0:
+            return h/Facade.nres[1]
+        else:
+            return w/Facade.nres[0]
+
+    @property
+    def obj(self):
+        return Facade.images + Facade.provs + Facade.butts
 
 
 
@@ -34,29 +63,26 @@ class Facade:
             x.units = response[1]
 
     def update_players(self):
-        Facade.players = []
         Facade.players_list = self.command("player_list")
         i = 0
         for x in Facade.players_list:
-            Facade.players.append(button(self.mapsize[0] + 30, 30 + 50 * i, 125, 35, x, color2[i], False, False, 2))
+            Facade.butts.append(button(self.mapsize[0] + 30, 30 + 50 * i, 125, 35, x, color2[i], False, False, 2))
             i += 1
 
-    def update(self, nick, inLobby, room_name):
+    def update(self, nick):
         Facade.nick = nick
-        Facade.inLobby = inLobby
-        Facade.room_name = room_name
-        if inLobby:
+        if self.inLobby:
             self.setlobby(nick)
-        elif not inLobby:
+        elif not self.inLobby:
             self.loadmap()
-        if Facade.inLobby:
+        if self.inLobby:
             pass
         else:
             self.update_players()
         self.update_provs()
 
     def command(self, input):
-        comm = [Facade.nick, Facade.room_name]
+        comm = [Facade.nick, "room"]
         if type(input) is list:
             for x in input:
                 comm.append(x)
@@ -91,15 +117,10 @@ class Facade:
 
     def reset(self):
         self.backscreen = color["beige"]
-        Facade.players = []
         Facade.provs = []
         Facade.butts = []
         Facade.images = []
         Facade.players_list = []
-        Facade.my_state = None
-
-    def drag(self):
-        pass
 
     def click(self):
         comm = None
@@ -109,17 +130,6 @@ class Facade:
                     comm = x.comm
         if comm is not None:
             response = self.command(comm)  # TODO
-
-    @property
-    def scale(self):
-        w, h = pg.display.get_surface().get_size()
-        if w/h >= 16.0/9.0:
-            return h/Facade.nres[1]
-        else:
-            return w/Facade.nres[0]
-    @property
-    def obj(self):
-        return Facade.images + Facade.players + Facade.provs + Facade.butts
 
     def show(self):
         self.screen.fill(self.backscreen)
@@ -148,7 +158,6 @@ class image(Facade):
 
     @property
     def isOver(self):
-        pos = pg.mouse.get_pos()
         return False
 
 ########################################################################################################################
@@ -265,6 +274,3 @@ class province(Facade):
         self.drawtext(Facade.screen,
                  int(self.X*self.scale), int(self.Y*self.scale),
                  str(self.unitsDIS), 12*self.scale)
-
-
-########################################################################################################################

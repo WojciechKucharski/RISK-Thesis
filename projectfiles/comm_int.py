@@ -1,12 +1,17 @@
 def command_int(self, command):
+    #command 0 1 2 3 4
+    #        nick, room, command, args
 
     if len(command) <= 1:
         print("Error")
         return False
-########################################################################################################################
+
+    command[1] = self.whereIam(command[0])
+
+    ########################################################################################################################
 
     if command[2] == "whereIam":
-        return self.whereIam(command[0])
+        return command[1]
 
 ########################################################################################################################
     if command[1] == "lobby":
@@ -29,6 +34,7 @@ def command_int(self, command):
             self.rooms[self.index(command[3])].addplayer(command[0])
 
 ########################################################################################################################
+    # self.rooms[self.index(command[1])].
     else:
         if command[2] == "mapname":
             return self.rooms[self.index(command[1])].mapname
@@ -42,6 +48,8 @@ def command_int(self, command):
         elif command[2] == "leave":
             self.rooms[self.index(command[1])].rmplayer(command[0])
             self.clear_rooms()
+        elif command[2] == "myState":
+            return self.rooms[self.index(command[1])].myState(command[0])
 
 ########################################################################################################################
 

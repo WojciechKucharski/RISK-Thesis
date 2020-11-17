@@ -34,7 +34,7 @@ class client:
 ########################################################################################################################
 
     def update(self):
-        self.game.update(self.nick, self.inLobby, self.room_name)
+        self.game.update(self.nick)
 
     def command(self, input):
         return self.game.command(input)
