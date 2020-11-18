@@ -11,14 +11,17 @@ class Facade:
     provs   = []
     butts   = []
     images  = []
-    net = []
     nick = []
 
     def __init__(self, screen, net):
         Facade.nres = (1280-160, 720-90)
         Facade.screen = screen
-        Facade.net = net
+        self.net = net
         self.backscreen = color["black"]
+
+    @property
+    def nick(self):
+        return Facade.nick
 
     @property
     def room_name(self):
@@ -54,7 +57,19 @@ class Facade:
     def obj(self):
         return Facade.images + Facade.provs + Facade.butts
 
-########################################################################################################################
+    @property
+    def players_list(self):
+        Facade.players_list = self.command("player_list")
+        return Facade.playerlist
+
+    def addButton(self, recipe):
+        Facade.butts.append(button(recipe))
+
+    def addProvince(self, recipe):
+        Facade.provs.append(province(recipe))
+
+    def addImage(self, path):
+        Facade.images.append(image(path))
 
     def update_provs(self):
         for x in Facade.provs:
@@ -62,24 +77,11 @@ class Facade:
             x.owner = response[0]
             x.units = response[1]
 
-    def update_players(self):
-        Facade.players_list = self.command("player_list")
-        i = 0
-        for x in Facade.players_list:
-            Facade.butts.append(button(self.mapsize[0] + 30, 30 + 50 * i, 125, 35, x, color2[i], False, False, 2))
-            i += 1
+########################################################################################################################
 
     def update(self, nick):
         Facade.nick = nick
-        if self.inLobby:
-            self.setlobby(nick)
-        elif not self.inLobby:
-            self.loadmap()
-        if self.inLobby:
-            pass
-        else:
-            self.update_players()
-        self.update_provs()
+        visuals_update(self)
 
     def command(self, input):
         comm = [Facade.nick, "room"]
@@ -88,32 +90,7 @@ class Facade:
                 comm.append(x)
         else:
             comm.append(input)
-        return Facade.net.send(comm)
-
-    def loadmap(self):
-        self.reset()
-        self.mapname = self.command("mapname")
-        Facade.images.append(image('Data\\Maps\\' + self.mapname + '\\' + self.mapname + '.jpg'))
-        self.mapsize = list(self.images[0].img.get_size())
-
-        for x in connect_csv('Data\\Maps\\' + self.mapname + '\\' + self.mapname + '.csv'):
-            Facade.provs.append(province(x))
-
-
-
-    def setlobby(self, nick):
-        self.reset()
-        self.backscreen = color["gray"]
-        Facade.butts.append(button(100, 100, 800, 75, nick, color["white"], False, False, 5))
-        Facade.butts.append(button(100, 200, 800, 75, "Create Room", color["purple"], True, False, 4, "create"))
-
-        rooms = self.command("roomlist")
-        i = 0
-        if rooms is not False:
-            for x in rooms:
-                self.butts.append(button(100, 300 + 75 * i, 800, 50, x, color["green"], True, False, 3, ["join", x[:-7]]))
-                i+=1
-
+        return self.net.send(comm)
 
     def reset(self):
         self.backscreen = color["beige"]
@@ -165,17 +142,17 @@ class image(Facade):
 ########################################################################################################################
 
 class button(Facade):
-    def __init__(self, X, Y, dx, dy, text, color = (128, 128, 128), clickable = True, textonly = False, font_amp = 1, comm = None): #button object init, if no color given, GRAY
-        self.X = X #left corner X
-        self.Y = Y #left corner Y
-        self.dx = dx #width
-        self.dy = dy #height
-        self.text = text
-        self.color = color
-        self.clickable = clickable
-        self.textonly = textonly
-        self.font_amp = font_amp
-        self.comm = comm
+    def __init__(self, recipe): #X, Y, dx, dy, text, color = (128, 128, 128), clickable = True, textonly = False, font_amp = 1, comm = None
+        self.X = recipe[0]
+        self.Y = recipe[1]
+        self.dx = recipe[2]
+        self.dy = recipe[3]
+        self.text = recipe[4]
+        self.color = recipe[5]
+        self.clickable = recipe[6]
+        self.textonly = recipe[7]
+        self.font_amp = recipe[8]
+        self.comm = recipe[9]
 
     @property
     def isOver(self): #function that tells if mouse is over this object

@@ -63,6 +63,7 @@ class client:
 
             if event.type == pg.MOUSEBUTTONDOWN:
                 self.game.click()
+                return True
 
             if self.inLobby:
                 if event.type == pg.KEYDOWN:
@@ -73,6 +74,7 @@ class client:
                     else:
                         if len(self.nick) <= 10:
                             self.nick += event.unicode
+
         return True
 
     def pgInit(self):
