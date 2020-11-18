@@ -1,6 +1,5 @@
 from scratch import *
 
-
 def visuals_update(self):
 
     self.reset()
@@ -9,8 +8,6 @@ def visuals_update(self):
         setlobby(self)
     elif s == 0:
         loadmap(self)
-
-
 
 def setlobby(self):
 
@@ -34,11 +31,10 @@ def loadmap(self):
     for x in connect_csv('Data\\Maps\\' + self.mapname + '\\' + self.mapname + '.csv'):
         self.addProvince(x)
 
-    self.update_players()
-    self.update_provs()
-
-def update_players(self):
     i = 0
     for x in self.players_list:
         self.addButton([self.mapsize[0] + 30, 30 + 50 * i, 125, 35, x, color2[i], False, False, 2, None])
         i += 1
+
+    self.update_provs()
+

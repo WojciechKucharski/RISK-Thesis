@@ -1,7 +1,7 @@
 import pygame as pg
 from scratch import *
 import math
-from visuals import *
+from visuals import visuals_update
 
 ########################################################################################################################
 class Facade:
@@ -18,6 +18,10 @@ class Facade:
         Facade.screen = screen
         self.net = net
         self.backscreen = color["black"]
+
+    def update(self, nick):
+        Facade.nick = nick
+        visuals_update(self)
 
     @property
     def nick(self):
@@ -77,12 +81,6 @@ class Facade:
             x.owner = response[0]
             x.units = response[1]
 
-########################################################################################################################
-
-    def update(self, nick):
-        Facade.nick = nick
-        visuals_update(self)
-
     def command(self, input):
         comm = [Facade.nick, "room"]
         if type(input) is list:
@@ -98,8 +96,6 @@ class Facade:
         Facade.butts = []
         Facade.images = []
         Facade.players_list = []
-
-########################################################################################################################
 
     def click(self):
         comm = None
@@ -152,7 +148,14 @@ class button(Facade):
         self.clickable = recipe[6]
         self.textonly = recipe[7]
         self.font_amp = recipe[8]
-        self.comm = recipe[9]
+        self.comm_c = recipe[9]
+
+    @property
+    def comm(self):
+        if self.clickable:
+            return self.comm_c
+        else:
+            return None
 
     @property
     def isOver(self): #function that tells if mouse is over this object
