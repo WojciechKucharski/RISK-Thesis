@@ -55,14 +55,33 @@ class game:
         self.turn_time = 0
 
         self.player_state = 0
+        self.new_units = 0
 
     @property
     def n_players(self):
         return len(self.players)
 
+    @property
+    def add_new_units(self):
+        return 3
+
+    def imHost(self, nick):
+        if nick == self.creator:
+            return True
+        else:
+            return False
+
     def myTurn(self, nick):
         if nick == self.turn:
             return True
+        else:
+            return False
+
+    def startGame(self, nick):
+        print(self.players)
+        if self.imHost(nick):
+            self.game_started = True
+            self.next_turn()
         else:
             return False
 
@@ -72,6 +91,8 @@ class game:
         if i >= self.n_players:
             i = 0
         self.turn = self.players[i]
+        self.player_state = 2
+        self.new_units = self.add_new_units
 
     def addplayer(self, nick):
         self.players.append(nick)
@@ -84,6 +105,12 @@ class game:
                 adding = False
 
     def rmplayer(self, nick):
+        if self.creator == nick:
+            if len(self.players) > 1:
+                self.creator = self.players[1]
+        if self.turn == nick:
+            if len(self.players) > 1:
+                self.turn = self.players[1]
         self.players.remove(nick)
 
     def myState(self, nick):
@@ -91,6 +118,8 @@ class game:
             return 0
         elif self.myTurn(nick) is False:
             return 1
+        elif self.myTurn(nick) and self.new_units > 0:
+            return 2
         else:
             return self.player_state
 

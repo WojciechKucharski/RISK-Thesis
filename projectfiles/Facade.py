@@ -64,7 +64,7 @@ class Facade:
     @property
     def players_list(self):
         Facade.players_list = self.command("player_list")
-        return Facade.playerlist
+        return Facade.players_list
 
     def addButton(self, recipe):
         Facade.butts.append(button(recipe))
@@ -76,10 +76,15 @@ class Facade:
         Facade.images.append(image(path))
 
     def update_provs(self):
+        Facade.players_list = self.command("player_list")
+
         for x in Facade.provs:
-            response = self.command(x.comm)
-            x.owner = response[0]
-            x.units = response[1]
+            if x.comm is None:
+                pass
+            else:
+                response = self.command(["prov", x.comm])
+                x.owner = response[0]
+                x.units = response[1]
 
     def command(self, input):
         comm = [Facade.nick, "room"]
@@ -191,12 +196,12 @@ class province(Facade):
         self.bonus = int(data[7])
         self.con = list(map(int, data[8:-1]))
         self.HL = False
+        self.clickable = True
 
         self.owner = None
         self.units = None
 
     def getColor(self):
-
         if self.owner in Facade.players_list:
             return color2[Facade.players_list.index(self.owner)]
         else:
@@ -204,10 +209,15 @@ class province(Facade):
 
     @property
     def comm(self):
-        return ["prov", self.id]
+        if self.clickable and self.visible:
+            return self.id
+        else:
+            return None
 
     @property
     def isOver(self):
+        if self.clickable is False:
+            return False
         if self.visible is False:
             return False
         pos = pg.mouse.get_pos()
@@ -243,6 +253,8 @@ class province(Facade):
     def show2(self):
         if self.isOver:
             border = color["white"]
+        elif self.HL is not False:
+            border = self.HL
         else:
             border = color["black"]
         pg.draw.circle(Facade.screen,

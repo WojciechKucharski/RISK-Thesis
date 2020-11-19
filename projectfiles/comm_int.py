@@ -21,16 +21,12 @@ def command_int(self, command):
                 feedback.append(x.room_name)
             return feedback
         elif command[2] == "create" and command[1] == "lobby":
-
             if len(self.rooms) < 4:
                 print("Room created")
                 self.create_room(command[0])
                 return command[0]
-
             return False
-
         elif command[2] == "join":
-            print(command)
             self.rooms[self.index(command[3])].addplayer(command[0])
 
 ########################################################################################################################
@@ -38,7 +34,6 @@ def command_int(self, command):
     else:
         if command[2] == "mapname":
             return self.rooms[self.index(command[1])].mapname
-
         elif command[2] == "prov":
             a = self.rooms[self.index(command[1])].provs[command[3]].owner
             b = self.rooms[self.index(command[1])].provs[command[3]].units
@@ -50,6 +45,10 @@ def command_int(self, command):
             self.clear_rooms()
         elif command[2] == "myState":
             return self.rooms[self.index(command[1])].myState(command[0])
+        elif command[2] == "imHost":
+            return self.rooms[self.index(command[1])].imHost(command[0])
+        elif command[2] == "start":
+            return self.rooms[self.index(command[1])].startGame(command[0])
 
 ########################################################################################################################
 
