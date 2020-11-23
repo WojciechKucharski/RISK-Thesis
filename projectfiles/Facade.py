@@ -19,7 +19,23 @@ class Facade:
         Facade.screen = screen
         self.net = net
         self.backscreen = color["black"]
+        self.FPS_ = 0
+        self.ui = 0
+        self.ui2 = 0
 
+    @property
+    def updateInterval(self):
+        t = time.time() - self.ui
+        if t > self.ui2:
+            self.ui = time.time()
+            return True
+        else:
+            return False
+    @property
+    def FPS(self):
+        F = time.time() - self.FPS_
+        self.FPS_ = time.time()
+        return str(math.floor(1/F))
     def update(self, nick):
         Facade.nick = nick
         visuals_update(self)
@@ -149,10 +165,13 @@ class Facade:
     def update_provs(self):
         Facade.players_list = self.command("player_list")
 
+        if self.updateInterval:
+            self.download_prov_info()
+
         for x in Facade.provs:
-            response = self.command(["prov", x.id])
-            x.owner = response[0]
-            x.units = response[1]
+            #response = self.command(["prov", x.id])
+            #x.owner = response[0]
+            #x.units = response[1]
             x.clickable = False
             x.HL = False
 

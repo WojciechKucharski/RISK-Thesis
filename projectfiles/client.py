@@ -40,8 +40,9 @@ class client:
         return self.game.command(input)
 
     def connect(self):
-        while True:
-            net = Network("25.95.17.180", 5555) #TODO
+        IPS = ["25.95.17.180", "139.162.187.98"]
+        for x in IPS:
+            net = Network(x, 5555) #TODO
             if net.connected:
                 return net
             else:
