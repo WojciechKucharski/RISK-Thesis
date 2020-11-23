@@ -15,7 +15,6 @@ class lobby:
         self.rooms.append(game(creator))
 
     def index(self, room_name):
-        return 0
         i = 0
         for x in self.rooms:
             if x.creator == room_name:
