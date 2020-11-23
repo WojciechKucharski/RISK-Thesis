@@ -68,9 +68,11 @@ def visuals_update(self):
         self.update_provs()
 
 def display_players(self):
-    i = 0
+    txt = self.command("turnTime")
+    self.addButton([self.mapsize[0] + 30, 30, 125, 35, txt, color2[0], False, True, 1, None])
+    i = 1
     for x in self.command("player_list"):
-        self.addButton([self.mapsize[0] + 30, 30 + 50 * i, 125, 35, x, color2[i], False, False, 2, None])
+        self.addButton([self.mapsize[0] + 30, 30 + 50 * i, 125, 35, x, color2[i-1], False, False, 2, None])
         i += 1
 
 def loadmap(self):

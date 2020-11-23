@@ -65,6 +65,8 @@ def command_int(self, command):
             self.rooms[self.index(command[1])].Tactic(command[0], command[3])
         elif command[2] == "number":
             self.rooms[self.index(command[1])].number(command[0], command[3])
+        elif command[2] == "turnTime":
+            return self.rooms[self.index(command[1])].gettime
 
 ########################################################################################################################
 

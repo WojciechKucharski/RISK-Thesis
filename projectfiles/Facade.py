@@ -118,8 +118,12 @@ class Facade:
             self.command(["number", 0])
         else:
             for x in range(Facade.provs[NO].units):
+                dx = 20
+                dy = 2
+                a = x % 35
+                b = x // 35
                 self.addButton(
-                    [15 + 30*x, self.mapsize[1] + 15, 25, 25, str(x), color["lime"], True, False, 2,
+                    [15 + (dx+dy) * a, self.mapsize[1] + 15 + (dx+dy) * b, dx, dx, str(x), color["lime"], True, False, 1,
                     ["number", x]])
 
     def show(self):
@@ -163,7 +167,7 @@ class Facade:
             Facade.provs[HL].HL = True
         if s in [0, 1, 5, 6]:
             pass
-        elif s in [2, 3, 7, 8]:
+        elif s in [2, 3, 7]:
             for x in Facade.provs:
                 if x.owner == self.nick:
                     x.clickable = True
@@ -174,10 +178,28 @@ class Facade:
                         Facade.provs[x].clickable = True
         elif s == 9:
             pass
+        elif s == 8:
+            if HL is not None:
+                for x in self.connected([HL]):
+                    if Facade.provs[x].owner == self.nick:
+                        Facade.provs[x].clickable = True
         else:
             pass
 
-
+    def connected(self, id):
+        new = False
+        for x in id:
+            for y in Facade.provs[x].con:
+                if Facade.provs[int(y)].owner == self.nick:
+                    if y in id:
+                        pass
+                    else:
+                        new = True
+                        id.append(y)
+        if new:
+            return self.connected(id)
+        else:
+            return id
 
 ########################################################################################################################
 

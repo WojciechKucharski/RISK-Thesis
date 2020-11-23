@@ -1,7 +1,8 @@
-import pygame as pg
 from scratch import *
 from comm_int import *
 import random
+import time
+import math
 
 class lobby:
     def __init__(self):
@@ -38,6 +39,8 @@ class lobby:
 class game:
     def __init__(self, creator, mapname = "map"):
         self.room_name = creator + "'s Room"
+        self.turn_time = 0
+        self.maxTT = 150
         self.creator = creator
         self.mapname = mapname
         self.players = []
@@ -57,12 +60,50 @@ class game:
         self.new_units = 0
 
     @property
+    def gettime(self):
+        if self.game_started is False:
+            return "Waiting..."
+        else:
+            R = time.time() - self.turn_time
+            if R > self.maxTT:
+                self.next_turn()
+            return "Turn time: " + str(math.floor(self.maxTT - R))
+
+    @property
     def n_players(self):
         return len(self.players)
 
     @property
+    def mProv(self):
+        my_provinces = []
+        for x in self.provs:
+            if x.owner == self.turn:
+                my_provinces.append(int(x.id))
+        return my_provinces
+
+    @property
     def add_new_units(self):
-        return 3
+        new = 0
+        cont = []
+        cont_own = []
+        new += math.ceil(len(self.mProv)/3)
+        for x in self.provs:
+            if x.cont in cont:
+                pass
+            else:
+                cont.append(x.cont)
+                cont_own.append(0)
+            if x.owner == self.turn:
+                if cont_own[cont.index(x.cont)] != -1:
+                    cont_own[cont.index(x.cont)] = x.bonus
+            else:
+                cont_own[cont.index(x.cont)] = -1
+
+        for x in cont_own:
+            if x < 0:
+                x = 0
+            new += x
+        return new
 
     def imHost(self, nick):
         if nick == self.creator:
@@ -98,12 +139,11 @@ class game:
             self.HL2 = None
             self.next_turn()
 
-
     def startGame(self, nick):
 
         for x in self.players:
             adding = 0
-            while adding < 20:
+            while adding < 1:
                 R = random.randint(0, len(self.provs)-1)
                 if self.provs[R].owner == None:
                     self.provs[R].owner = x
@@ -124,11 +164,46 @@ class game:
                 self.HL = None
                 self.HL2 = None
                 self.player_state = 3
-
             elif T =="R":
-                print(T)
+                self.fight()
             elif T == "B":
-                print(T)
+                while self.player_state not in [3, 6]:
+                    self.fight()
+            print("###########")
+            print(self.HL, self.HL2)
+
+    def fight(self):
+            print("fajt")
+            off = []
+            deff = []
+            off_n = min(3, self.provs[self.HL].units - 1)
+            deff_n = min(2, self.provs[self.HL2].units)
+            for _ in range(off_n):
+                off.append(random.randint(1, 6))
+            for _ in range(deff_n):
+                deff.append(random.randint(1, 6))
+            off.sort(reverse=True)
+            deff.sort(reverse=True)
+
+            for x in range(min(off_n, deff_n)):
+                if off[x] > deff[x]:
+                    self.provs[self.HL2].units -= 1
+                else:
+                    self.provs[self.HL].units -= 1
+
+            if self.provs[self.HL].units == 1:
+                self.HL = None
+                self.HL2 = None
+                self.player_state = 3
+
+            elif self.provs[self.HL2].units == 0:
+                self.provs[self.HL2].units = self.provs[self.HL].units - 1
+                self.provs[self.HL2].owner = self.provs[self.HL].owner
+                self.provs[self.HL].units = 1
+                self.player_state = 6
+
+                print("###########")
+                print(self.HL, self.HL2)
 
     def number(self, nick, no):
         if nick != self.turn:
@@ -234,6 +309,7 @@ class game:
         self.turn = self.players[i]
         self.player_state = 2
         self.new_units = self.add_new_units
+        self.turn_time = time.time()
 
     def addplayer(self, nick):
         if self.game_started is False:
