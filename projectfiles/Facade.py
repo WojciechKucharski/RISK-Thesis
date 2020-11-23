@@ -3,6 +3,7 @@ from scratch import *
 import math
 from visuals import visuals_update
 
+import time
 ########################################################################################################################
 class Facade:
     screen  = None
@@ -59,12 +60,20 @@ class Facade:
 
     @property
     def obj(self):
-        return Facade.images + Facade.provs + Facade.butts
+        s = self.myState
+        if s == -1:
+            return Facade.butts
+        else:
+            return Facade.images + Facade.butts + Facade.provs
 
     @property
     def players_list(self):
         Facade.players_list = self.command("player_list")
         return Facade.players_list
+
+    def formatMap(self):
+        Facade.provs = []
+        Facade.images = []
 
     def addButton(self, recipe):
         Facade.butts.append(button(recipe))
@@ -74,17 +83,6 @@ class Facade:
 
     def addImage(self, path):
         Facade.images.append(image(path))
-
-    def update_provs(self):
-        Facade.players_list = self.command("player_list")
-
-        for x in Facade.provs:
-            if x.comm is None:
-                pass
-            else:
-                response = self.command(["prov", x.comm])
-                x.owner = response[0]
-                x.units = response[1]
 
     def command(self, input):
         comm = [Facade.nick, "room"]
@@ -97,19 +95,25 @@ class Facade:
 
     def reset(self):
         self.backscreen = color["beige"]
-        Facade.provs = []
         Facade.butts = []
-        Facade.images = []
         Facade.players_list = []
 
     def click(self):
         comm = None
-        for x in Facade.provs + Facade.butts:
+        for x in Facade.butts:
             if x.isOver:
                 if x.comm is not None:
                     comm = x.comm
         if comm is not None:
-            response = self.command(comm)  # TODO
+            self.command(comm)
+        else:
+            comm = ["provClick", None]
+            for x in Facade.provs:
+                if x.isOver:
+                    comm = ["provClick", x.id]
+            self.command(comm)
+
+
 
     def show(self):
         self.screen.fill(self.backscreen)
@@ -124,21 +128,49 @@ class Facade:
         TextRect.center = (X, Y)
         screen.blit(TextSurf, TextRect)
 
-########################################################################################################################
+    def download_prov_info(self):
+        Facade.players_list = self.command("player_list")
+        for x in Facade.provs:
+            response = self.command(["prov", x.id])
+            x.owner = response[0]
+            x.units = response[1]
 
-class image(Facade):
-    def __init__(self, path):
-        self.img = pg.image.load(path)
-        self.size = list(self.img.get_size())
+    def update_provs(self):
+        Facade.players_list = self.command("player_list")
 
-    def show(self):
-        temp_img = self.img.copy()
-        temp_img = pg.transform.scale(temp_img, (int(self.scale * self.size[0]), int(self.scale * self.size[1])))
-        Facade.screen.blit(temp_img, (0, 0))
+        for x in Facade.provs:
+            response = self.command(["prov", x.id])
+            x.owner = response[0]
+            x.units = response[1]
+            x.clickable = False
+            x.HL = False
 
-    @property
-    def isOver(self):
-        return False
+        s = self.myState
+        HL = self.command("HL")
+        HL2 = self.command("HL2")
+
+        if HL2 is not None:
+            if Facade.provs[HL2].owner == self.nick or s != 1:
+                Facade.provs[HL2].HL = True
+        if HL is not None:
+            Facade.provs[HL].HL = True
+        if s in [0, 1, 5, 6]:
+            pass
+        elif s in [2, 3, 7, 8]:
+            for x in Facade.provs:
+                if x.owner == self.nick:
+                    x.clickable = True
+        elif s == 4:
+            if HL is not None:
+                for x in Facade.provs[HL].con:
+                    if Facade.provs[x].owner != self.nick:
+                        Facade.provs[x].clickable = True
+        elif s == 9:
+            pass
+        else:
+            pass
+
+
 
 ########################################################################################################################
 
@@ -251,20 +283,38 @@ class province(Facade):
             self.show2()
 
     def show2(self):
+        border = color["black"]
+        if self.HL:
+            border = color["beige"]
         if self.isOver:
             border = color["white"]
-        elif self.HL is not False:
-            border = self.HL
-        else:
-            border = color["black"]
         pg.draw.circle(Facade.screen,
                        self.getColor(),
                        (int(self.X*self.scale), int(self.Y*self.scale)),
                        int(19*self.scale), 0)
+
         pg.draw.circle(Facade.screen, border,
                        (int(self.X*self.scale),
                         int(self.Y*self.scale)), int(20*self.scale),
                        int(3*self.scale))
+
         self.drawtext(Facade.screen,
                  int(self.X*self.scale), int(self.Y*self.scale),
                  str(self.unitsDIS), 12*self.scale)
+########################################################################################################################
+
+class image(Facade):
+    def __init__(self, path):
+        self.img = pg.image.load(path)
+        self.size = list(self.img.get_size())
+
+    def show(self):
+        temp_img = self.img.copy()
+        temp_img = pg.transform.scale(temp_img, (int(self.scale * self.size[0]), int(self.scale * self.size[1])))
+        Facade.screen.blit(temp_img, (0, 0))
+
+    @property
+    def isOver(self):
+        return False
+
+

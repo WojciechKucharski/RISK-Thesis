@@ -78,12 +78,73 @@ class game:
             return False
 
     def startGame(self, nick):
-        print(self.players)
+
+        for x in self.players:
+            adding = 0
+            while adding < 20:
+                R = random.randint(0, len(self.provs)-1)
+                print(R)
+                if self.provs[R].owner == None:
+                    self.provs[R].owner = x
+                    self.provs[R].units = 3
+                    adding += 1
+
         if self.imHost(nick):
             self.game_started = True
             self.next_turn()
         else:
             return False
+
+    def provClick(self, nick, id):
+        if nick != self.turn:
+            return False
+
+        if self.player_state == 1:
+            pass
+
+        if id is None:
+            if self.player_state in [4, 8, 9]:
+                if self.player_state == 4:
+                    self.player_state = 3
+                    self.HL = None
+                    self.HL2 = None
+                elif self.player_state == 8:
+                    self.player_state = 7
+                    self.HL = None
+                    self.HL2 = None
+                elif self.player_state == 9:
+                    self.player_state = 8
+                    self.HL2 = None
+                return False
+            else:
+                return False
+
+
+        elif self.player_state == 2:
+            if self.provs[id].owner == nick and self.new_units > 0:
+                self.provs[id].units += 1
+                self.new_units -= 1
+            if self.new_units == 0:
+                self.player_state = 3
+
+        elif self.player_state == 3:
+            if self.provs[id].owner == nick:
+                if self.provs[id].units > 1:
+                    self.HL = id
+                    self.player_state = 4
+
+        elif self.player_state == 4:
+            if self.provs[id].owner != nick:
+                if self.provs[id].units == 0:
+                    self.provs[id].owner = nick
+                    self.provs[id].units = self.provs[self.HL].units - 1
+                    self.provs[self.HL].units = 1
+                    self.HL = None
+                    self.player_state = 3
+                else:
+                    self.HL2 = id
+                    self.player_state = 5
+
 
     def next_turn(self):
         i = self.players.index(self.turn)
@@ -96,13 +157,6 @@ class game:
 
     def addplayer(self, nick):
         self.players.append(nick)
-        adding = True
-        while adding:
-            R = random.randint(0, len(self.provs))
-            if self.provs[R].owner == None:
-                self.provs[R].owner = nick
-                self.provs[R].units = 3
-                adding = False
 
     def rmplayer(self, nick):
         if self.creator == nick:

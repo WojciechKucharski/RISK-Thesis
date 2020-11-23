@@ -49,6 +49,14 @@ def command_int(self, command):
             return self.rooms[self.index(command[1])].imHost(command[0])
         elif command[2] == "start":
             return self.rooms[self.index(command[1])].startGame(command[0])
+        elif command[2] == "HL":
+            return self.rooms[self.index(command[1])].HL
+        elif command[2] == "HL2":
+            return self.rooms[self.index(command[1])].HL2
+        elif command[2] == "newUnits":
+            return self.rooms[self.index(command[1])].new_units
+        elif command[2] == "provClick":
+            self.rooms[self.index(command[1])].provClick(command[0], command[3])
 
 ########################################################################################################################
 

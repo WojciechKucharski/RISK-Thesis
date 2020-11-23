@@ -7,21 +7,35 @@ def visuals_update(self):
         setlobby(self)
     elif s == 0:
         loadmap(self)
-        set_buttons(self)
-    else:
-        set_buttons(self)
+        if self.command("imHost"):
+            self.addButton(
+                [self.mapsize[0] + 30, self.mapsize[1] + 30, 125, 35, "START", color["yellow"], True, False, 2,
+                 "start"])
+    elif s == 1:
+        pass
+    elif s == 2:
+        new = self.command("newUnits")
+        self.addButton(
+            [self.mapsize[0] + 30, self.mapsize[1] + 30, 125, 35, "ADD: " + str(new), color["lime"], False, False, 2,
+             None])
+    elif s == 3:
+        pass
+    elif s == 4:
+        pass
+    elif s == 5:
+        pass
+    elif s == 6:
+        pass
+    elif s == 7:
+        pass
+    elif s == 8:
+        pass
+    elif s == 9:
+        pass
 
     if s != -1:
         display_players(self)
         self.update_provs()
-
-
-def set_buttons(self):
-
-    if self.command("imHost"):
-        self.addButton([self.mapsize[0] + 30, self.mapsize[1] + 30, 125, 35, "START", color["yellow"], True, False, 2, "start"])
-
-########################################################################################################################
 
 def display_players(self):
     i = 0
@@ -30,6 +44,7 @@ def display_players(self):
         i += 1
 
 def loadmap(self):
+    self.formatMap()
     self.mapname = self.command("mapname")
     self.addImage('Data\\Maps\\' + self.mapname + '\\' + self.mapname + '.jpg')
     self.mapsize = list(self.images[0].img.get_size())
