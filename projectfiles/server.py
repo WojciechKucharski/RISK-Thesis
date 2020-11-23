@@ -3,7 +3,7 @@ from _thread import *
 import pickle
 from game import *
 
-server = "25.95.17.180"
+server = ""
 port = 5555
 
 G = lobby()
