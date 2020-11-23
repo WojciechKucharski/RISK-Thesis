@@ -1,6 +1,9 @@
 from client import *
-
-game = client()
+try:
+    game = client()
+except Exception as e:
+    print(e)
+    input()
 x = True
 while x:
     try:
