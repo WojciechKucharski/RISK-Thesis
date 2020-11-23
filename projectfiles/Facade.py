@@ -113,7 +113,14 @@ class Facade:
                     comm = ["provClick", x.id]
             self.command(comm)
 
-
+    def renderNumbers(self, NO):
+        if Facade.provs[NO].units == 1:
+            self.command(["number", 0])
+        else:
+            for x in range(Facade.provs[NO].units):
+                self.addButton(
+                    [15 + 30*x, self.mapsize[1] + 15, 25, 25, str(x), color["lime"], True, False, 2,
+                    ["number", x]])
 
     def show(self):
         self.screen.fill(self.backscreen)

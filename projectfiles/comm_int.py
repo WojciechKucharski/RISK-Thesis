@@ -57,6 +57,14 @@ def command_int(self, command):
             return self.rooms[self.index(command[1])].new_units
         elif command[2] == "provClick":
             self.rooms[self.index(command[1])].provClick(command[0], command[3])
+        elif command[2] == "skipAttack":
+            self.rooms[self.index(command[1])].skipAttack(command[0])
+        elif command[2] == "skipFortify":
+            self.rooms[self.index(command[1])].skipFortify(command[0])
+        elif command[2] == "Tactic":
+            self.rooms[self.index(command[1])].Tactic(command[0], command[3])
+        elif command[2] == "number":
+            self.rooms[self.index(command[1])].number(command[0], command[3])
 
 ########################################################################################################################
 

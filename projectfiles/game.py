@@ -42,17 +42,16 @@ class game:
         self.mapname = mapname
         self.players = []
         self.provs = []
+        self.game_started = False
+        self.HL = None
+        self.HL2 = None
+        self.turn_time = 0
         for x in connect_csv('Data\\Maps\\' + self.mapname + '\\' + self.mapname + '.csv'):
             self.provs.append(province(x))
             self.provs[-1].units = 0
         self.addplayer(creator)
 
         self.turn = creator
-        self.game_started = False
-
-        self.HL = None
-        self.HL2 = None
-        self.turn_time = 0
 
         self.player_state = 0
         self.new_units = 0
@@ -71,11 +70,34 @@ class game:
         else:
             return False
 
+    def myState(self, nick):
+        if self.game_started == False:
+            return 0
+        elif self.myTurn(nick) is False:
+            return 1
+        elif self.myTurn(nick) and self.new_units > 0:
+            return 2
+        else:
+            return self.player_state
+
     def myTurn(self, nick):
         if nick == self.turn:
             return True
         else:
             return False
+
+    def skipAttack(self, nick):
+        if nick == self.turn:
+            self.HL = None
+            self.HL2 = None
+            self.player_state = 7
+
+    def skipFortify(self, nick):
+        if nick == self.turn:
+            self.HL = None
+            self.HL2 = None
+            self.next_turn()
+
 
     def startGame(self, nick):
 
@@ -83,7 +105,6 @@ class game:
             adding = 0
             while adding < 20:
                 R = random.randint(0, len(self.provs)-1)
-                print(R)
                 if self.provs[R].owner == None:
                     self.provs[R].owner = x
                     self.provs[R].units = 3
@@ -95,12 +116,57 @@ class game:
         else:
             return False
 
+    def Tactic(self, nick, T):
+        if nick != self.turn:
+            return False
+        else:
+            if T == "E":
+                self.HL = None
+                self.HL2 = None
+                self.player_state = 3
+
+            elif T =="R":
+                print(T)
+            elif T == "B":
+                print(T)
+
+    def number(self, nick, no):
+        if nick != self.turn:
+            return False
+        else:
+            if self.player_state == 5:
+                self.HL = None
+                self.HL2 = None
+                self.player_state = 3
+            elif self.player_state == 9:
+                if no == 0:
+                    self.HL = None
+                    self.HL2 = None
+                    self.player_state = 7
+                elif no < self.provs[self.HL].units:
+                    self.provs[self.HL].units -= no
+                    self.provs[self.HL2].units += no
+                    self.HL = None
+                    self.HL2 = None
+                    self.next_turn()
+                else:
+                    return False
+            elif self.player_state == 6:
+                if no < self.provs[self.HL2].units:
+                    self.provs[self.HL].units += no
+                    self.provs[self.HL2].units -= no
+                    self.HL = None
+                    self.HL2 = None
+                    self.player_state = 3
+                else:
+                    return False
+
     def provClick(self, nick, id):
         if nick != self.turn:
             return False
 
-        if self.player_state == 1:
-            pass
+        if self.myState(nick) == 1:
+            return False
 
         if id is None:
             if self.player_state in [4, 8, 9]:
@@ -139,14 +205,28 @@ class game:
                     self.provs[id].owner = nick
                     self.provs[id].units = self.provs[self.HL].units - 1
                     self.provs[self.HL].units = 1
-                    self.HL = None
-                    self.player_state = 3
+                    self.HL2 = id
+                    self.player_state = 6
                 else:
                     self.HL2 = id
                     self.player_state = 5
 
+        elif self.player_state == 7:
+            if self.provs[id].owner == nick:
+                if self.provs[id].units > 1:
+                    self.HL = id
+                    self.player_state = 8
+
+        elif self.player_state == 8:
+            if self.provs[id].owner == nick:
+                if self.HL != id:
+                    self.HL2 = id
+                    self.player_state = 9
+
 
     def next_turn(self):
+        self.HL = None
+        self.HL2 = None
         i = self.players.index(self.turn)
         i+=1
         if i >= self.n_players:
@@ -156,7 +236,8 @@ class game:
         self.new_units = self.add_new_units
 
     def addplayer(self, nick):
-        self.players.append(nick)
+        if self.game_started is False:
+           self.players.append(nick)
 
     def rmplayer(self, nick):
         if self.creator == nick:
@@ -164,18 +245,8 @@ class game:
                 self.creator = self.players[1]
         if self.turn == nick:
             if len(self.players) > 1:
-                self.turn = self.players[1]
+                self.next_turn()
         self.players.remove(nick)
-
-    def myState(self, nick):
-        if self.game_started == False:
-            return 0
-        elif self.myTurn(nick) is False:
-            return 1
-        elif self.myTurn(nick) and self.new_units > 0:
-            return 2
-        else:
-            return self.player_state
 
 class province:
     def __init__(self, data):

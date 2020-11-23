@@ -19,20 +19,50 @@ def visuals_update(self):
             [self.mapsize[0] + 30, self.mapsize[1] + 30, 125, 35, "ADD: " + str(new), color["lime"], False, False, 2,
              None])
     elif s == 3:
-        pass
+        self.addButton(
+            [self.mapsize[0] + 30, self.mapsize[1] + 30, 125, 35, "ATTACK", color["lime"], False, False, 2,
+             None])
+        self.addButton(
+            [self.mapsize[0] + 30 + 150, self.mapsize[1] + 30, 125, 35, "SKIP", color["lime"], True, False, 2,
+             "skipAttack"])
     elif s == 4:
-        pass
+        self.addButton(
+            [self.mapsize[0] + 30, self.mapsize[1] + 30, 125, 35, "ATTACK", color["lime"], False, False, 2,
+             None])
     elif s == 5:
-        pass
+        self.addButton(
+            [self.mapsize[0] + 30, self.mapsize[1] + 30, 125, 35, "TACTIC", color["lime"], False, False, 2,
+             None])
+        self.addButton(
+            [self.mapsize[0] + 30, self.mapsize[1] - 30, 125, 35, "ESCAPE", color["lime"], True, False, 2,
+             ["Tactic", "E"]])
+        self.addButton(
+            [self.mapsize[0] + 30, self.mapsize[1] - 75, 125, 35, "BLITZ", color["lime"], True, False, 2,
+             ["Tactic", "B"]])
+        self.addButton(
+            [self.mapsize[0] + 30, self.mapsize[1] - 120, 125, 35, "ROLL", color["lime"], True, False, 2,
+             ["Tactic", "R"]])
     elif s == 6:
-        pass
+        self.addButton(
+            [self.mapsize[0] + 30, self.mapsize[1] + 30, 125, 35, "MOVE", color["lime"], False, False, 2,
+             None])
+        self.renderNumbers(self.command("HL2"))
     elif s == 7:
-        pass
+        self.addButton(
+            [self.mapsize[0] + 30, self.mapsize[1] + 30, 125, 35, "FORTIFY", color["lime"], False, False, 2,
+             None])
+        self.addButton(
+            [self.mapsize[0] + 30 + 150, self.mapsize[1] + 30, 125, 35, "SKIP", color["lime"], True, False, 2,
+             "skipFortify"])
     elif s == 8:
-        pass
+        self.addButton(
+            [self.mapsize[0] + 30, self.mapsize[1] + 30, 125, 35, "FORTIFY", color["lime"], False, False, 2,
+             None])
     elif s == 9:
-        pass
-
+        self.addButton(
+            [self.mapsize[0] + 30, self.mapsize[1] + 30, 125, 35, "MOVE", color["lime"], False, False, 2,
+             None])
+        self.renderNumbers(self.command("HL"))
     if s != -1:
         display_players(self)
         self.update_provs()
