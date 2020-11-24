@@ -20,35 +20,59 @@ class Facade:
         self.net = net
         self.backscreen = color["black"]
         self.FPS_ = 0
-        self.ui = 0
-        self.ui2 = 0
-    @property
-    def stats(self):
-        return "FPS: " + self.FPS + ", ping: " + self.ping
 
-    @property
-    def updateInterval(self):
-        t = time.time() - self.ui
-        if t > self.ui2:
-            self.ui = time.time()
-            return True
+        self.mapsize = (0, 0)
+        self.mapname = None
+        self.myState = -1
+        self.imHost = None
+        self.HL = None
+        self.HL2 = None
+        self.newUnits = None
+        self.turnTime = None
+        self.ping = None
+        self.players_list = []
+
+        self.stats = None
+
+    def updateGameInfo(self):
+        b = time.time()
+        response = self.command("gameInfo")
+        b = time.time() - b
+        if response is False:
+            pass
         else:
-            return False
+            self.ping = str(math.floor(1000*b))
+            self.mapname = response[0]
+            self.myState = response[1]
+            self.imHost = response[2]
+            self.HL = response[3]
+            self.HL2 = response[4]
+            self.newUnits = response[5]
+            self.turnTime = response[6]
+            Facade.players_list = response[7]
+            self.players_list = response[7]
+
+            self.stats = "FPS: " + self.FPS + ", ping: " + self.ping
+            if len(Facade.provs) > 0:
+                response = self.command("provinces")
+                i = 0
+                for x in response:
+                    Facade.provs[i].units = x[0]
+                    Facade.provs[i].owner = x[1]
+                    i+=1
+
     @property
     def FPS(self):
         F = time.time() - self.FPS_
         self.FPS_ = time.time()
         return str(math.floor(1/F))
 
-    @property
-    def ping(self):
-        b = time.time()
-        self.command("myState")
-        b = time.time() - b
-        return str(math.floor(1000*b))
-
     def update(self, nick):
         Facade.nick = nick
+        if self.myState == -1:
+            self.myState = self.command("myState")
+        if self.myState != -1:
+            self.updateGameInfo()
         visuals_update(self)
 
     @property
@@ -71,13 +95,6 @@ class Facade:
             return False
 
     @property
-    def myState(self):
-        if self.inLobby:
-            return -1
-        else:
-            return self.command("myState")
-
-    @property
     def scale(self):
         w, h = pg.display.get_surface().get_size()
         if w/h >= 16.0/9.0:
@@ -92,11 +109,6 @@ class Facade:
             return Facade.butts
         else:
             return Facade.images + Facade.butts + Facade.provs
-
-    @property
-    def players_list(self):
-        Facade.players_list = self.command("player_list")
-        return Facade.players_list
 
     def formatMap(self):
         Facade.provs = []
@@ -166,29 +178,15 @@ class Facade:
         TextRect.center = (X, Y)
         screen.blit(TextSurf, TextRect)
 
-    def download_prov_info(self):
-        Facade.players_list = self.command("player_list")
-        for x in Facade.provs:
-            response = self.command(["prov", x.id])
-            x.owner = response[0]
-            x.units = response[1]
-
     def update_provs(self):
-        Facade.players_list = self.command("player_list")
-
-        if self.updateInterval:
-            self.download_prov_info()
 
         for x in Facade.provs:
-            #response = self.command(["prov", x.id])
-            #x.owner = response[0]
-            #x.units = response[1]
             x.clickable = False
             x.HL = False
 
         s = self.myState
-        HL = self.command("HL")
-        HL2 = self.command("HL2")
+        HL = self.HL
+        HL2 = self.HL2
 
         if HL2 is not None:
             if Facade.provs[HL2].owner == self.nick or s != 1:
@@ -288,11 +286,13 @@ class province(Facade):
         self.con = list(map(int, data[8:-1]))
         self.HL = False
         self.clickable = True
+        self.col = None
 
         self.owner = None
         self.units = None
 
     def getColor(self):
+        print(Facade.players_list)
         if self.owner in Facade.players_list:
             return color2[Facade.players_list.index(self.owner)]
         else:

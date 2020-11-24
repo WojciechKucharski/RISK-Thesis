@@ -59,6 +59,23 @@ class game:
         self.player_state = 0
         self.new_units = 0
 
+    def gameInfo(self, nick):
+        res = []
+        res.append(self.mapname)
+        res.append(self.myState(nick))
+        res.append(self.imHost(nick))
+        res.append(self.HL)
+        res.append(self.HL2)
+        res.append(self.new_units)
+        res.append(self.gettime)
+        res.append(self.players)
+        return res
+    @property
+    def provinces(self):
+        res = []
+        for x in self.provs:
+            res.append([x.units, x.owner])
+        return res
     @property
     def gettime(self):
         if self.game_started is False:

@@ -8,6 +8,10 @@ def command_int(self, command):
 
     command[1] = self.whereIam(command[0])
 
+    if command[2] == "gameInfo":
+        if command[1] == "lobby":
+            return [None, -1]
+
     ########################################################################################################################
 
     if command[2] == "whereIam":
@@ -15,6 +19,8 @@ def command_int(self, command):
 
 ########################################################################################################################
     if command[1] == "lobby":
+        if command[2] == "myState":
+            return -1
 
         if command[2] == "roomlist":
             feedback = []
@@ -31,29 +37,15 @@ def command_int(self, command):
             self.rooms[self.index(command[3])].addplayer(command[0])
 
 ########################################################################################################################
-    # self.rooms[self.index(command[1])].
     else:
+        if command[2] == "gameInfo":
+            print(command)
+            return self.rooms[self.index(command[1])].gameInfo(command[0])
+        elif command[2] == "provinces":
+            return self.rooms[self.index(command[1])].provinces
 
-        if command[2] == "prov":
-            a = self.rooms[self.index(command[1])].provs[command[3]].owner
-            b = self.rooms[self.index(command[1])].provs[command[3]].units
-            return [a, b]
-        elif command[2] == "mapname":
-            return self.rooms[self.index(command[1])].mapname
-        elif command[2] == "player_list":
-            return self.rooms[self.index(command[1])].players
         elif command[2] == "myState":
             return self.rooms[self.index(command[1])].myState(command[0])
-        elif command[2] == "imHost":
-            return self.rooms[self.index(command[1])].imHost(command[0])
-        elif command[2] == "HL":
-            return self.rooms[self.index(command[1])].HL
-        elif command[2] == "HL2":
-            return self.rooms[self.index(command[1])].HL2
-        elif command[2] == "newUnits":
-            return self.rooms[self.index(command[1])].new_units
-        elif command[2] == "turnTime":
-            return self.rooms[self.index(command[1])].gettime
 
         elif command[2] == "start":
             self.rooms[self.index(command[1])].startGame(command[0])
@@ -70,7 +62,6 @@ def command_int(self, command):
         elif command[2] == "leave":
             self.rooms[self.index(command[1])].rmplayer(command[0])
             self.clear_rooms()
-
 ########################################################################################################################
 
     return False
