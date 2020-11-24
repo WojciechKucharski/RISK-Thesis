@@ -40,13 +40,15 @@ class client:
         return self.game.command(input)
 
     def connect(self):
-        IPS = ["25.95.17.180", "139.162.187.98"]
-        for x in IPS:
-            net = Network(x, 5555) #TODO
-            if net.connected:
-                return net
-            else:
-                print("Failed to connect")
+        IPS = ["139.162.187.98", "25.95.17.180"]
+        while True:
+            for x in IPS:
+                net = Network(x, 5555) #TODO
+                if net.connected:
+                    print("Connected to: ", x)
+                    return net
+                else:
+                    print("Failed to connect")
 
     def eventHandler(self):
         for event in pg.event.get():

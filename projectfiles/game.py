@@ -49,7 +49,7 @@ class game:
         self.HL = None
         self.HL2 = None
         self.turn_time = 0
-        for x in connect_csv('Data\\Maps\\' + self.mapname + '\\' + self.mapname + '.csv'):
+        for x in connect_csv('Data/Maps/' + self.mapname + '/' + self.mapname + '.csv'):
             self.provs.append(province(x))
             self.provs[-1].units = 0
         self.addplayer(creator)

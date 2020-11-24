@@ -39,14 +39,11 @@ def command_int(self, command):
 ########################################################################################################################
     else:
         if command[2] == "gameInfo":
-            print(command)
             return self.rooms[self.index(command[1])].gameInfo(command[0])
         elif command[2] == "provinces":
             return self.rooms[self.index(command[1])].provinces
-
         elif command[2] == "myState":
             return self.rooms[self.index(command[1])].myState(command[0])
-
         elif command[2] == "start":
             self.rooms[self.index(command[1])].startGame(command[0])
         elif command[2] == "provClick":
