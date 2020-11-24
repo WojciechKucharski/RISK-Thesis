@@ -183,6 +183,8 @@ class Facade:
         for x in Facade.provs:
             x.clickable = False
             x.HL = False
+            if x.owner in self.players_list:
+                x.col = color2[self.players_list.index(x.owner)]
 
         s = self.myState
         HL = self.HL
@@ -292,11 +294,10 @@ class province(Facade):
         self.units = None
 
     def getColor(self):
-        print(Facade.players_list)
-        if self.owner in Facade.players_list:
-            return color2[Facade.players_list.index(self.owner)]
-        else:
+        if self.col == None:
             return color["gray"]
+        else:
+            return self.col
 
     @property
     def comm(self):

@@ -274,6 +274,10 @@ class game:
                     self.player_state = 8
                     self.HL2 = None
                 return False
+            elif self.player_state == 6:
+                self.player_state = 3
+                self.HL = None
+                self.HL2 = None
             else:
                 return False
 
