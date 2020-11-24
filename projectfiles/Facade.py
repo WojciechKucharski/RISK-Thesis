@@ -22,6 +22,9 @@ class Facade:
         self.FPS_ = 0
         self.ui = 0
         self.ui2 = 0
+    @property
+    def stats(self):
+        return "FPS: " + self.FPS + ", ping: " + self.ping
 
     @property
     def updateInterval(self):
@@ -36,6 +39,14 @@ class Facade:
         F = time.time() - self.FPS_
         self.FPS_ = time.time()
         return str(math.floor(1/F))
+
+    @property
+    def ping(self):
+        b = time.time()
+        self.command("myState")
+        b = time.time() - b
+        return str(math.floor(1000*b))
+
     def update(self, nick):
         Facade.nick = nick
         visuals_update(self)

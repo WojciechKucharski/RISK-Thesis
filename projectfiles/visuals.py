@@ -68,7 +68,8 @@ def visuals_update(self):
         self.update_provs()
 
 def display_players(self):
-    self.addButton([20, 10, 15, 15, "FPS: "+self.FPS, color2[0], False, True, 1, None])
+
+    self.addButton([40, 10, 15, 15, self.stats, color2[0], False, True, 1, None])
     txt = self.command("turnTime")
     self.addButton([self.mapsize[0] + 30, 30, 125, 35, txt, color2[0], False, True, 1, None])
     i = 1
