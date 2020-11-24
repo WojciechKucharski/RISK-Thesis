@@ -281,7 +281,6 @@ class game:
             else:
                 return False
 
-
         elif self.player_state == 2:
             if self.provs[id].owner == nick and self.new_units > 0:
                 self.provs[id].units += 1

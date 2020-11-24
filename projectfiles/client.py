@@ -65,7 +65,8 @@ class client:
                 pg.display.update()
 
             if event.type == pg.MOUSEBUTTONDOWN:
-                self.game.click()
+                if len(self.nick) > 0:
+                    self.game.click()
                 return True
 
             if self.inLobby:
