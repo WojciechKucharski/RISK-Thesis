@@ -7,6 +7,9 @@ class client:
     def __init__(self):
         self.pgInit()
         self.nick = "Nick"
+        with open('Data\\nick.txt') as f:
+            self.nick = f.readline()
+            f.close()
         self.net = self.connect()
         self.screen = pg.display.set_mode((800, 450), pg.RESIZABLE)
         self.game = Facade(self.screen, self.net)
@@ -40,15 +43,15 @@ class client:
         return self.game.command(input)
 
     def connect(self):
-        IPS = ["139.162.187.98", "25.95.17.180"]
+        with open('Data\\ip.txt') as f:
+            x = f.readline()
         while True:
-            for x in IPS:
-                net = Network(x, 5555) #TODO
-                if net.connected:
-                    print("Connected to: ", x)
-                    return net
-                else:
-                    print("Failed to connect")
+            net = Network(x, 5555) #TODO
+            if net.connected:
+                print("Connected to: ", x)
+                return net
+            else:
+                print("Failed to connect")
 
     def eventHandler(self):
         for event in pg.event.get():
@@ -78,6 +81,9 @@ class client:
                     else:
                         if len(self.nick) <= 10:
                             self.nick += event.unicode
+                    with open('Data\\nick.txt', "w") as f:
+                        f.writelines(self.nick)
+                        f.close()
 
         return True
 

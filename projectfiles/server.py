@@ -5,9 +5,7 @@ from game import *
 
 server = ""
 port = 5555
-
 G = lobby()
-
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 try:
@@ -21,14 +19,14 @@ print("Waiting for connection, Server Started")
 def threaded_client(conn):
     conn.send(pickle.dumps(True))
     while True:
-        try:
+        if True:
             data = pickle.loads(conn.recv(2048))
             if not data:
                 break
             else:
                 pass
             conn.sendall(pickle.dumps(G.command(data)))
-        except Exception as e:
+        else: #except Exception as e:
             print(e)
             break
     print("Lost connection")

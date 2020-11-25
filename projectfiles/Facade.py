@@ -31,8 +31,19 @@ class Facade:
         self.turnTime = None
         self.ping = None
         self.players_list = []
-
+        self.fow = True
         self.stats = None
+
+        self.sound = [(pg.mixer.Sound("Data\\Sound\\cl.wav")), pg.mixer.Sound("Data\\Sound\\ex.wav"),
+                      pg.mixer.Sound("Data\\Sound\\ar.wav")]
+        for x in self.sound:
+            x.set_volume(0.05)
+
+    def play_sound(self, no):
+        pg.mixer.Sound.play(self.sound[no-1])
+        if no == 3:
+            N = self.sound[no - 1].get_length()
+            self.sound[no - 1].fadeout(int(N * 150))
 
     def updateGameInfo(self):
         b = time.time()
@@ -41,9 +52,9 @@ class Facade:
         if response is False:
             pass
         else:
+
             self.ping = str(math.floor(1000*b))
             self.mapname = response[0]
-            self.myState = response[1]
             self.imHost = response[2]
             self.HL = response[3]
             self.HL2 = response[4]
@@ -51,6 +62,10 @@ class Facade:
             self.turnTime = response[6]
             Facade.players_list = response[7]
             self.players_list = response[7]
+            self.fow = response[8]
+            if self.myState != response[1] and response[1] == 2:
+                self.play_sound(3)
+            self.myState = response[1]
 
             self.stats = "FPS: " + self.FPS + ", ping: " + self.ping
             if len(Facade.provs) > 0:
@@ -138,19 +153,58 @@ class Facade:
         Facade.players_list = []
 
     def click(self):
+        self.play_sound(1)
         comm = None
         for x in Facade.butts:
             if x.isOver:
                 if x.comm is not None:
                     comm = x.comm
         if comm is not None:
-            self.command(comm)
+
+            res = self.command(comm)
+            if comm == ["Tactic", "R"]:
+                self.rolls(res)
+            elif comm == ["Tactic", "B"]:
+                self.play_sound(2)
+            elif comm[0] == "number":
+                if comm[1] != 0:
+                    self.play_sound(3)
         else:
             comm = ["provClick", None]
             for x in Facade.provs:
                 if x.isOver:
                     comm = ["provClick", x.id]
             self.command(comm)
+
+    def rolls(self, roll):
+        A = len(roll[0])
+        D = len(roll[1])
+        i = 0
+        for x in roll[0]:
+            self.addButton(
+                [self.mapsize[0] + 30, self.mapsize[1] - 220 + 30*i, 25, 25, str(x), Facade.provs[self.HL].getColor(), False, False,
+                2.5, None])
+            i+=1
+        i = 0
+        for x in roll[1]:
+            self.addButton(
+                [self.mapsize[0] + 65, self.mapsize[1] - 220 + 30 * i, 25, 25, str(x), Facade.provs[self.HL2].getColor(), False,
+                    False, 2.5, None])
+            i += 1
+
+        self.show()
+        time.sleep(1)
+        for x in range(min(len(roll[0]), len(roll[1]))):
+            if roll[0][x] > roll[1][x]:
+                Facade.butts[x-D-A].X += 15
+                Facade.butts[x-D].X += 500
+            else:
+                Facade.butts[x-D - A].X += 500
+                Facade.butts[x-D].X -= 15
+            self.show()
+            self.play_sound(2)
+            time.sleep(1)
+        time.sleep(1)
 
     def renderNumbers(self, NO):
         if Facade.provs[NO].units == 1:
@@ -164,6 +218,7 @@ class Facade:
                 self.addButton(
                     [15 + (dx+dy) * a, self.mapsize[1] + 15 + (dx+dy) * b, dx, dx, str(x), color["lime"], True, False, 1,
                     ["number", x]])
+
 
     def show(self):
         self.screen.fill(self.backscreen)
@@ -183,8 +238,11 @@ class Facade:
         for x in Facade.provs:
             x.clickable = False
             x.HL = False
+            x.av = not self.fow
             if x.owner in self.players_list:
                 x.col = color2[self.players_list.index(x.owner)]
+            else:
+                x.col = None
 
         s = self.myState
         HL = self.HL
@@ -289,6 +347,7 @@ class province(Facade):
         self.HL = False
         self.clickable = True
         self.col = None
+        self.av = False
 
         self.owner = None
         self.units = None
@@ -323,6 +382,8 @@ class province(Facade):
 
     @property
     def visible(self):
+        if self.av:
+            return True
         if self.owner == Facade.nick:
             return True
         for x in self.con:

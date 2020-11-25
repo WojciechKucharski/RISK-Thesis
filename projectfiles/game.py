@@ -40,7 +40,14 @@ class game:
     def __init__(self, creator, mapname = "map"):
         self.room_name = creator + "'s Room"
         self.turn_time = 0
+
         self.maxTT = 150
+        self.fow = True
+        self.contBonus = True
+        self.startProvs = 1
+        self.startUnits = 3
+        self.emptyUnits = 0
+
         self.creator = creator
         self.mapname = mapname
         self.players = []
@@ -53,14 +60,21 @@ class game:
             self.provs.append(province(x))
             self.provs[-1].units = 0
         self.addplayer(creator)
-
         self.turn = creator
-
         self.player_state = 0
         self.new_units = 0
 
+    @property
+    def maxstartProvs(self):
+        return math.floor(len(self.provs)/len(self.players))
+
     def gameInfo(self, nick):
         res = []
+
+        fow = False
+        for x in self.provs:
+            if x.owner == nick:
+                fow = self.fow
         res.append(self.mapname)
         res.append(self.myState(nick))
         res.append(self.imHost(nick))
@@ -69,7 +83,58 @@ class game:
         res.append(self.new_units)
         res.append(self.gettime)
         res.append(self.players)
+        res.append(fow)
         return res
+
+    def gameSet(self, nick):
+        if self.imHost(nick):
+            if self.startProvs > self.maxstartProvs:
+                self.startProvs = self.maxstartProvs
+
+        res = []
+        res.append("Fog of war: " + str(self.fow))
+        res.append("Continent bonus: " + str(self.contBonus))
+        res.append("Start provinces: " + str(self.startProvs))
+        res.append("Start units: " + str(self.startUnits))
+        res.append("Turn time: " + str(self.maxTT))
+        res.append("Empty units: " + str(self.emptyUnits))
+        return res
+
+    def gameSet2(self, nick, act):
+        if self.game_started:
+            return False
+        if self.imHost(nick):
+            if act == 0:
+                if self.fow:
+                    self.fow = False
+                else:
+                    self.fow = True
+            elif act == 1:
+                if self.contBonus:
+                    self.contBonus = False
+                else:
+                    self.contBonus = True
+            elif act == 2:
+                self.startProvs += 1
+                if self.startProvs > self.maxstartProvs:
+                    self.startProvs = 1
+            elif act == 3:
+                self.startUnits += 1
+                if self.startUnits > 10:
+                    self.startUnits = 1
+            elif act == 4:
+                self.maxTT += 50
+                if self.maxTT > 500:
+                    self.maxTT = 50
+            elif act == 5:
+                self.emptyUnits += 1
+                if self.emptyUnits > 5:
+                    self.emptyUnits = 0
+            else:
+                return False
+            return True
+        else:
+            return False
     @property
     def provinces(self):
         res = []
@@ -84,7 +149,7 @@ class game:
             R = time.time() - self.turn_time
             if R > self.maxTT:
                 self.next_turn()
-            return "Turn time: " + str(math.floor(self.maxTT - R))
+            return self.turn + "'s turn: " + str(math.floor(self.maxTT - R)) + " seconds left"
 
     @property
     def n_players(self):
@@ -104,6 +169,10 @@ class game:
         cont = []
         cont_own = []
         new += math.ceil(len(self.mProv)/3)
+        if self.contBonus is False:
+            return new
+        else:
+            pass
         for x in self.provs:
             if x.cont in cont:
                 pass
@@ -158,13 +227,15 @@ class game:
 
     def startGame(self, nick):
 
+        for x in self.provs:
+            x.units = self.emptyUnits
         for x in self.players:
             adding = 0
-            while adding < 1:
+            while adding < self.startProvs:
                 R = random.randint(0, len(self.provs)-1)
                 if self.provs[R].owner == None:
                     self.provs[R].owner = x
-                    self.provs[R].units = 3
+                    self.provs[R].units = self.startUnits
                     adding += 1
 
         if self.imHost(nick):
@@ -182,15 +253,12 @@ class game:
                 self.HL2 = None
                 self.player_state = 3
             elif T =="R":
-                self.fight()
+                return self.fight()
             elif T == "B":
                 while self.player_state not in [3, 6]:
                     self.fight()
-            print("###########")
-            print(self.HL, self.HL2)
-
+            return False
     def fight(self):
-            print("fajt")
             off = []
             deff = []
             off_n = min(3, self.provs[self.HL].units - 1)
@@ -219,8 +287,8 @@ class game:
                 self.provs[self.HL].units = 1
                 self.player_state = 6
 
-                print("###########")
-                print(self.HL, self.HL2)
+
+            return [off, deff]
 
     def number(self, nick, no):
         if nick != self.turn:
@@ -330,6 +398,9 @@ class game:
         self.player_state = 2
         self.new_units = self.add_new_units
         self.turn_time = time.time()
+
+        if len(self.mProv) == 0:
+            self.next_turn()
 
     def addplayer(self, nick):
         if self.game_started is False:

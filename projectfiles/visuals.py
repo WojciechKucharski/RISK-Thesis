@@ -17,6 +17,13 @@ def visuals_update(self):
             self.addButton(
                 [self.mapsize[0] + 30, self.mapsize[1] + 30, 125, 35, "START", color["yellow"], True, False, 2,
                  "start"])
+        info = self.command("gameSet")
+        i = 0
+        for x in info:
+            self.addButton(
+                [self.mapsize[0] + 30, self.mapsize[1] + 30 - 40*(1+i), 125, 35, x, color["yellow"], self.imHost, False, 1,
+                 ["gameSet2", i]])
+            i += 1
     elif s == 1:
         pass
     elif s == 2:
