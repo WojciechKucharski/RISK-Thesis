@@ -18,6 +18,7 @@
 https://en.wikipedia.org/wiki/Risk_(game)
 ```
 # Release
-* .rar file uploaded to Google Drive
+## .rar file uploaded to Google Drive
 
-[Download link](https://drive.google.com/file/d/1-tqf1_5-32lI1PXWNijGGshCghuSUQCK/view?usp=sharing)
+
+* [Download link](https://drive.google.com/file/d/1fDWt9l2cPYWWaDilA03n_xdb-x3fv9gp/view?usp=sharing)
