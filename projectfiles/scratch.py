@@ -11,6 +11,7 @@ def connect_csv(path): #reading CSV file
 
 ########################################################################################################################
 
+#color dictionary
 color = {
     "red":(255, 0, 0), "blue":(0, 0, 255), "lime":(0, 255, 0),
     "cyan":(0,255,255), "green":(0, 153, 0), "yellow":(255, 255, 0),
@@ -18,7 +19,7 @@ color = {
     "orange":(255, 153, 0), "pink":(255, 0, 255), "purple":(102, 0, 204),
     "gray":(115, 115, 115), "beige":(255, 230, 179)
 }
-
+#color list
 color2 = [(255, 255, 0), (0, 255, 255), (0, 255, 0),
     (0,0,255), (0, 153, 0),(255, 0, 0),
     (255, 255, 255), (0, 0, 0), (102, 51, 0),
@@ -26,9 +27,8 @@ color2 = [(255, 255, 0), (0, 255, 255), (0, 255, 0),
     (115, 115, 115), (255, 230, 179)]
 
 ########################################################################################################################
-
+#function to save error message in file
 def printError(e): #saving error message to file
-
     try:
         dateC ="Data\\Crash\\" + date.today().strftime("%d_%m_%Y") + ".txt" #current date
         now = datetime.now().strftime("%H_%M_%S") + str(e) +"\n"       #current time + error message
