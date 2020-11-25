@@ -4,7 +4,12 @@ try:
 except Exception as e:
     print(e)
 
-while game.run():
-    pass
+running = True
+while running:
+    try:
+        running = game.run()
+    except Exception as e:
+        print(e)
+
 
 

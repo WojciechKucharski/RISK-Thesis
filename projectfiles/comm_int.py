@@ -1,26 +1,23 @@
 def command_int(self, command):
-
-    if len(command) <= 1:
+    if len(command) <= 1: #check if command structure is wrong
         print("Error")
         return False
+    command[1] = self.whereIam(command[0]) #check where client is
 
-    command[1] = self.whereIam(command[0])
-    if command[2] == "gameInfo":
-        if command[1] == "lobby":
-            return [None, -1]
-
+# COMMANDS WHILE IN ALWAYS #############################################################################################
     if command[2] == "whereIam":
         return command[1]
-
+# COMMANDS WHILE IN LOBBY ##############################################################################################
     if command[1] == "lobby":
         if command[2] == "myState":
             return -1
-
-        if command[2] == "roomlist":
+        elif command[2] == "roomlist":
             feedback = []
             for x in self.rooms:
                 feedback.append(x.room_name)
             return feedback
+        elif command[2] == "gameInfo":
+            return [None, -1]
         elif command[2] == "create" and command[1] == "lobby":
             if len(self.rooms) < 4:
                 print("Room created")
@@ -29,7 +26,9 @@ def command_int(self, command):
             return False
         elif command[2] == "join":
             self.rooms[self.index(command[3])].addplayer(command[0])
-########################################################################################################################
+        else:
+            return False
+# COMMANDS WHILE IN GAME ###############################################################################################
     else:
         if command[2] == "gameInfo":
             return self.rooms[self.index(command[1])].gameInfo(command[0])
@@ -56,5 +55,5 @@ def command_int(self, command):
         elif command[2] == "leave":
             self.rooms[self.index(command[1])].rmplayer(command[0])
             self.clear_rooms()
-########################################################################################################################
     return False
+########################################################################################################################

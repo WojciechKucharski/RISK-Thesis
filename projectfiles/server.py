@@ -3,34 +3,34 @@ from _thread import *
 import pickle
 from game import *
 
-server = ""
+server = "" #read ip from sys
 port = 5555
-G = lobby()
+G = lobby() #create lobby
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 try:
-    s.bind((server, port))
+    s.bind((server, port)) #creating socket
 except socket.error as e:
     print(str(e))
 
-s.listen(10)
+s.listen(10) #connections
 print("Waiting for connection, Server Started")
 
-def threaded_client(conn):
-    conn.send(pickle.dumps(True))
+def threaded_client(conn): #connection thread
+    conn.send(pickle.dumps(True)) #respond when first connected
     while True:
         try:
-            data = pickle.loads(conn.recv(2048))
+            data = pickle.loads(conn.recv(2048)) #recive command from client
             if not data:
                 break
             else:
                 pass
-            conn.sendall(pickle.dumps(G.command(data)))
-        except Exception as e:
+            conn.sendall(pickle.dumps(G.command(data))) #send respond to client
+        except Exception as e: #if client disconnects, break loop
             print(e)
             break
     print("Lost connection")
-    conn.close()
+    conn.close() #close connection
 
 while True:
     conn, addr = s.accept()
