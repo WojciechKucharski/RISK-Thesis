@@ -34,6 +34,8 @@ class Facade:
         self.fow = True
         self.stats = None
 
+        self.UT = 0
+
         self.sound = [(pg.mixer.Sound("Data\\Sound\\cl.wav")), pg.mixer.Sound("Data\\Sound\\ex.wav"),
                       pg.mixer.Sound("Data\\Sound\\ar.wav")]
         for x in self.sound:
@@ -49,11 +51,10 @@ class Facade:
         b = time.time()
         response = self.command("gameInfo")
         b = time.time() - b
-        if response is False:
+        self.ping = str(math.floor(1000 * b))
+        if len(response) < 3:
             pass
         else:
-
-            self.ping = str(math.floor(1000*b))
             self.mapname = response[0]
             self.imHost = response[2]
             self.HL = response[3]
@@ -66,8 +67,6 @@ class Facade:
             if self.myState != response[1] and response[1] == 2:
                 self.play_sound(3)
             self.myState = response[1]
-
-            self.stats = "FPS: " + self.FPS + ", ping: " + self.ping
             if len(Facade.provs) > 0:
                 response = self.command("provinces")
                 i = 0
@@ -87,9 +86,27 @@ class Facade:
         if self.myState == -1:
             self.myState = self.command("myState")
         if self.myState != -1:
-            self.updateGameInfo()
+            if self.updateTime:
+                self.updateGameInfo()
+            self.stats = "FPS: " + self.FPS + ", ping: " + self.ping
         visuals_update(self)
 
+    @property
+    def updateTime(self):
+        return True
+        x = time.time() - self.UT
+        y = 0
+        if self.myState in [-1, 0]:
+            pass
+        if self.myState == 1:
+            y = 1
+        else:
+            y = 0.2
+        if x > y:
+            self.UT = time.time()
+            return True
+        else:
+            return False
     @property
     def nick(self):
         return Facade.nick
