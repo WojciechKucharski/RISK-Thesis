@@ -93,3 +93,5 @@ class client:
         icon = pg.image.load('Data\\Icon\\logo.png')  # loading icon
         pg.display.set_icon(icon)  # setting icon
         pg.mixer.music.load("Data\\Sound\\bg.wav")  # playing music in loop
+        pg.mixer.music.set_volume(0.01)
+        pg.mixer.music.play(-1)
