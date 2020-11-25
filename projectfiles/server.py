@@ -19,14 +19,14 @@ print("Waiting for connection, Server Started")
 def threaded_client(conn):
     conn.send(pickle.dumps(True))
     while True:
-        if True:
+        try:
             data = pickle.loads(conn.recv(2048))
             if not data:
                 break
             else:
                 pass
             conn.sendall(pickle.dumps(G.command(data)))
-        else: #except Exception as e:
+        except Exception as e:
             print(e)
             break
     print("Lost connection")
