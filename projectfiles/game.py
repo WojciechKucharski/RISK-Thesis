@@ -131,7 +131,7 @@ class game:
                 self.emptyUnits += 1
                 if self.emptyUnits > 5:
                     self.emptyUnits = 0
-            elif act == 5:
+            elif act == 6:
                 if self.mapname == "map":
                     self.mapname = "tamriel"
                 else:
