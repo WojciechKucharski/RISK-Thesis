@@ -7,12 +7,12 @@ def visuals_update(self):
         setlobby(self)
     elif s in range(10):
         if s == 0:
-            loadmap(self)
+            self.loadmap()
         display_players(self)
         self.update_provs()
 
     if s == 0:
-        loadmap(self)
+        self.loadmap()
         if self.imHost:
             self.addButton(
                 [self.mapsize[0] + 30, self.mapsize[1] + 30, 125, 35, "START", color["yellow"], True, False, 2,
@@ -85,21 +85,16 @@ def display_players(self):
     i = 1
     for x in self.players_list:
         self.addButton([self.mapsize[0] + 30, 30 + 50 * i, 125, 35, x, color2[i-1], False, False, 2, None])
+        if self.imHost:
+            if self.nick != x:
+                self.addButton([self.mapsize[0] + 160, 30 + 50 * i, 50, 35, "Kick", color2[i - 1], True, False, 1, ["kick", x]])
         i += 1
-
-def loadmap(self):
-    self.formatMap()
-    self.addImage('Data\\Maps\\' + self.mapname + '\\' + self.mapname + '.jpg')
-    self.mapsize = list(self.images[0].img.get_size())
-    for x in connect_csv('Data\\Maps\\' + self.mapname + '\\' + self.mapname + '.csv'):
-        self.addProvince(x)
 
 def setlobby(self):
 
     self.backscreen = color["gray"]
     self.addButton([100, 100, 800, 75, self.nick, color["white"], False, False, 5, None])
     self.addButton([100, 200, 800, 75, "Create Room", color["purple"], True, False, 4, "create"])
-
     rooms = self.command("roomlist")
     i = 0
     if rooms is not False:

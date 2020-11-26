@@ -37,14 +37,24 @@ class client:
     def run(self):
         self.game.update(self.nick) #update objects and variables in Facade object
         self.game.show() #display all objects in game
-        return self.eventHandler() #handle if event occurred
+        x = self.eventHandler() #handle if event occurred
+        if x == "Q":
+            return False
+        if x == "L":
+            self.game = Facade(self.screen, self.net)
+        else:
+            pass
+        return True
 
     def eventHandler(self):
         for event in pg.event.get(): #handle all events
             if event.type == pg.QUIT: #if [x] was clicked, break main loop and leave from room in server
-                self.game.command("leave") #leave room
-                return False #break loop
-
+                if self.game.myState == -1:
+                    self.game.command("leave")  # leave game
+                    return "Q"
+                else:
+                    self.game.command("leave")  # leave room
+                    return "L"
             elif event.type == pg.VIDEORESIZE: #handle resizing Window
                 if event.w < 854:
                     event.w = 854

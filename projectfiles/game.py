@@ -410,8 +410,9 @@ class game:
         self.new_units = self.add_new_units
         self.turn_time = time.time()
 
-        if len(self.mProv) == 0:
-            self.next_turn()
+        if self.game_started:
+            if len(self.mProv) == 0:
+                self.next_turn()
 
     def addplayer(self, nick):
         if self.game_started is False:

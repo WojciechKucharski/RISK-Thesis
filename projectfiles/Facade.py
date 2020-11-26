@@ -55,6 +55,9 @@ class Facade:
         if len(response) < 3:
             pass
         else:
+            if self.mapname != response[0]:
+                self.mapname = response[0]
+                self.loadmap()
             self.mapname = response[0]
             self.imHost = response[2]
             self.HL = response[3]
@@ -75,6 +78,7 @@ class Facade:
                     Facade.provs[i].owner = x[1]
                     i+=1
 
+
     @property
     def FPS(self):
         F = time.time() - self.FPS_
@@ -90,6 +94,7 @@ class Facade:
                 self.updateGameInfo()
             self.stats = "FPS: " + self.FPS + ", ping: " + self.ping
         visuals_update(self)
+
 
     @property
     def updateTime(self):
@@ -177,7 +182,6 @@ class Facade:
                 if x.comm is not None:
                     comm = x.comm
         if comm is not None:
-
             res = self.command(comm)
             if comm == ["Tactic", "R"]:
                 self.rolls(res)
@@ -192,6 +196,13 @@ class Facade:
                 if x.isOver:
                     comm = ["provClick", x.id]
             self.command(comm)
+
+    def loadmap(self):
+        self.formatMap()
+        self.addImage('Data\\Maps\\' + self.mapname + '\\' + self.mapname + '.jpg')
+        self.mapsize = list(self.images[0].img.get_size())
+        for x in connect_csv('Data\\Maps\\' + self.mapname + '\\' + self.mapname + '.csv'):
+            self.addProvince(x)
 
     def rolls(self, roll):
         A = len(roll[0])

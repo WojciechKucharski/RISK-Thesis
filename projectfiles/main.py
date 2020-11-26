@@ -7,9 +7,10 @@ except Exception as e:
 
 running = True
 while running:
-    try:
+    if True:
         running = game.run() #run client object till it returns False, which means that user clicked [X]
-    except Exception as e:
+    else: #except Exception as e:
+        print(e)
         printError(e)
 
 
