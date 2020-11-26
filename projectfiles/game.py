@@ -56,13 +56,17 @@ class game:
         self.HL = None
         self.HL2 = None
         self.turn_time = 0
-        for x in connect_csv('Data/Maps/' + self.mapname + '/' + self.mapname + '.csv'):
-            self.provs.append(province(x))
-            self.provs[-1].units = 0
+        self.reloadProvs()
         self.addplayer(creator)
         self.turn = creator
         self.player_state = 0
         self.new_units = 0
+
+    def reloadProvs(self):
+        self.provs = []
+        for x in connect_csv('Data/Maps/' + self.mapname + '/' + self.mapname + '.csv'):
+            self.provs.append(province(x))
+            self.provs[-1].units = 0
 
     @property
     def maxstartProvs(self):
@@ -136,6 +140,7 @@ class game:
                     self.mapname = "tamriel"
                 else:
                     self.mapname = "map"
+                self.reloadProvs()
             else:
                 return False
             return True
