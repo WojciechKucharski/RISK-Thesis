@@ -98,6 +98,7 @@ class game:
         res.append("Start units: " + str(self.startUnits))
         res.append("Turn time: " + str(self.maxTT))
         res.append("Empty units: " + str(self.emptyUnits))
+        res.append("Map: " + str(self.mapname))
         return res
 
     def gameSet2(self, nick, act):
@@ -130,6 +131,11 @@ class game:
                 self.emptyUnits += 1
                 if self.emptyUnits > 5:
                     self.emptyUnits = 0
+            elif act == 5:
+                if self.mapname == "map":
+                    self.mapname = "tamriel"
+                else:
+                    self.mapname = "map"
             else:
                 return False
             return True
