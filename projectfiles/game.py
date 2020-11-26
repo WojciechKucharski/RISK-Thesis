@@ -428,6 +428,10 @@ class game:
                 self.next_turn()
         self.players.remove(nick)
 
+    def kick(self, nick, kicker):
+        if self.imHost(nick):
+            self.rmplayer(kicker)
+
 class province:
     def __init__(self, data):
         self.id = int(data[1])

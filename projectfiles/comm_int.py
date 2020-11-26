@@ -55,5 +55,7 @@ def command_int(self, command):
         elif command[2] == "leave":
             self.rooms[self.index(command[1])].rmplayer(command[0])
             self.clear_rooms()
+        elif command[2] == "kick":
+            self.rooms[self.index(command[1])].kick(command[0], command[3])
     return False
 ########################################################################################################################
