@@ -422,6 +422,7 @@ class game:
         if self.creator == nick:
             if len(self.players) > 1:
                 self.creator = self.players[1]
+                self.room_name = self.creator + "'s Room"
         if self.turn == nick:
             if len(self.players) > 1:
                 self.next_turn()
