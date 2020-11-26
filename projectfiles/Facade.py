@@ -167,6 +167,7 @@ class Facade:
                 comm.append(x)
         else:
             comm.append(input)
+        print(comm)
         return self.net.send(comm)
 
     def reset(self):

@@ -39,9 +39,11 @@ class client:
         self.game.show() #display all objects in game
         x = self.eventHandler() #handle if event occurred
         if x == "Q":
+            self.game.myState = -1
             return False
         if x == "L":
-            self.game = Facade(self.screen, self.net)
+            self.game.myState = -1
+            #self.game = Facade(self.screen, self.net)
         else:
             pass
         return True
