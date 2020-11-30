@@ -90,6 +90,11 @@ class Facade:
 
         if self.myState == 0:
             self.gameSet = self.command("gameSet")
+            print(self.gameSet)
+            for x in range(2):
+                self.gameSet[x] = self.langPack[12+x][self.langPL] + ": " + self.langPack[20 - int(self.gameSet[x])][self.langPL]
+            for x in range(5):
+                self.gameSet[x+2] = self.langPack[14+x][self.langPL] + ": " + str(self.gameSet[x+2])
             self.loadmap()
 
         if self.myState != -1:

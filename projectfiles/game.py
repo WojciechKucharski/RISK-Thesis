@@ -96,13 +96,13 @@ class game:
                 self.startProvs = self.maxstartProvs
 
         res = []
-        res.append("Fog of war: " + str(self.fow))
-        res.append("Continent bonus: " + str(self.contBonus))
-        res.append("Start provinces: " + str(self.startProvs))
-        res.append("Start units: " + str(self.startUnits))
-        res.append("Turn time: " + str(self.maxTT))
-        res.append("Empty units: " + str(self.emptyUnits))
-        res.append("Map: " + str(self.mapname))
+        res.append(self.fow)
+        res.append(self.contBonus)
+        res.append(self.startProvs)
+        res.append(self.startUnits)
+        res.append(self.maxTT)
+        res.append(self.emptyUnits)
+        res.append(self.mapname)
         return res
 
     def gameSet2(self, nick, act):
