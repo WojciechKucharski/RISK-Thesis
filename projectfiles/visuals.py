@@ -4,11 +4,11 @@ def visuals_update(self):
     self.reset() #reset of buttons
     s = self.myState #my state
     self.stats = "FPS: " + self.FPS + ", ping: " + self.ping #info about game performance
-    lang = "ENG"
+    lang = "EN"
     if self.langPL == 0:
         lang = "PL"
     self.addButton(
-        [(self.windowSize[0] - 40)/self.scale, 15 , 25, 25, lang, color["lime"], True, True, 1, "changeLang"])
+        [(self.windowSize[0] - 50)/self.scale, 15 , 25, 25, lang, color["lime"], True, True, 1, "changeLang"])
     self.addButton([40, 10, 15, 15, self.stats, color2[0], False, True, 1, None])
     ########################################################################################################################
     # STAGE -1
@@ -21,7 +21,7 @@ def visuals_update(self):
         i = 0
         if rooms is not False:
             for x in rooms:
-                self.addButton([100, 300 + 75 * i, 800, 50, x, color["green"], True, False, 3, ["join", x[:-7]]])
+                self.addButton([100, 300 + 75 * i, 800, 50, x, color["green"], True, False, 3, ["join", x]])
                 i += 1
     elif s in range(10):
         display_players(self)
@@ -91,7 +91,7 @@ def visuals_update(self):
             [self.mapsize[0] + 30, self.mapsize[1] + 30, 125, 35, self.langPack[11][self.langPL], color["lime"], False, False, 2 - self.langPL,
              None])
         self.addButton(
-            [self.mapsize[0] + 30 + 150, self.mapsize[1] + 30, 125, 35, self.langPack[10][self.langPL], color["lime"], True, False, 2 - self.langPL,
+            [self.mapsize[0] + 30 + 150, self.mapsize[1] + 30, 125, 35, self.langPack[4][self.langPL], color["lime"], True, False, 2 - self.langPL,
              "skipFortify"])
 ########################################################################################################################
     # STAGE 8

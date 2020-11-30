@@ -38,7 +38,6 @@ class lobby:
 
 class game:
     def __init__(self, creator, mapname = "map"):
-        self.room_name = creator + "'s Room"
         self.turn_time = 0
 
         self.maxTT = 150
@@ -61,6 +60,10 @@ class game:
         self.turn = creator
         self.player_state = 0
         self.new_units = 0
+
+    @property
+    def room_name(self):
+        return self.creator
 
     def reloadProvs(self):
         self.provs = []
