@@ -21,6 +21,9 @@ class Facade:
         self.backscreen = color["black"]
         self.FPS_ = 0
 
+        self.langPack = connect_csv('Data\\Lang\\lang.csv')
+        self.langPL = 0
+        print(self.langPack)
         self.mapsize = (0, 0)
         self.mapname = None
         self.myState = -1
@@ -47,54 +50,61 @@ class Facade:
             N = self.sound[no - 1].get_length()
             self.sound[no - 1].fadeout(int(N * 150))
 
+    def update(self, nick):
+        Facade.nick = nick
+        self.updateGameInfo()
+        visuals_update(self)
+
     def updateGameInfo(self):
+        if not self.updateTime:
+            return True
+
         b = time.time()
-        response = self.command("gameInfo")
+        self.myState = self.command("myState")
         b = time.time() - b
         self.ping = str(math.floor(1000 * b))
-        if len(response) < 3:
-            pass
-        else:
-            if self.mapname != response[0]:
-                self.mapname = response[0]
-                self.loadmap()
-            self.mapname = response[0]
-            self.imHost = response[2]
-            self.HL = response[3]
-            self.HL2 = response[4]
-            self.newUnits = response[5]
-            self.turnTime = response[6]
-            Facade.players_list = response[7]
-            self.players_list = response[7]
-            self.fow = response[8]
-            if self.myState != response[1] and response[1] == 2:
-                self.play_sound(3)
-            self.myState = response[1]
-            if len(Facade.provs) > 0:
-                response = self.command("provinces")
-                i = 0
-                for x in response:
-                    Facade.provs[i].units = x[0]
-                    Facade.provs[i].owner = x[1]
-                    i+=1
 
+        if self.myState == -1:
+            return True
+
+        response = self.command("gameInfo")
+        self.mapname = response[0]
+        self.imHost = response[2]
+        self.HL = response[3]
+        self.HL2 = response[4]
+        self.newUnits = response[5]
+        self.turnTime = response[6]
+        Facade.players_list = response[7]
+        self.players_list = response[7]
+        self.fow = response[8]
+        if self.myState != response[1] and response[1] == 2:
+            self.play_sound(3)
+
+        if len(Facade.provs) > 0:
+            response = self.command("provinces")
+            i = 0
+            for x in response:
+                Facade.provs[i].units = x[0]
+                Facade.provs[i].owner = x[1]
+                i+=1
+
+        if self.myState == 0:
+            self.gameSet = self.command("gameSet")
+            self.loadmap()
+
+        if self.myState != -1:
+            self.update_provs()
+
+    @property
+    def windowSize(self):
+        w, h = pg.display.get_surface().get_size()
+        return [w, h]
 
     @property
     def FPS(self):
         F = time.time() - self.FPS_
         self.FPS_ = time.time()
         return str(math.floor(1/F))
-
-    def update(self, nick):
-        Facade.nick = nick
-        if self.myState == -1:
-            self.myState = self.command("myState")
-        if self.myState != -1:
-            if self.updateTime:
-                self.updateGameInfo()
-            self.stats = "FPS: " + self.FPS + ", ping: " + self.ping
-        visuals_update(self)
-
 
     @property
     def updateTime(self):
@@ -190,6 +200,11 @@ class Facade:
             elif comm[0] == "number":
                 if comm[1] != 0:
                     self.play_sound(3)
+            elif comm == "changeLang":
+                if self.langPL == 0:
+                    self.langPL = 1
+                else:
+                    self.langPL = 0
         else:
             comm = ["provClick", None]
             for x in Facade.provs:
@@ -247,20 +262,6 @@ class Facade:
                     [15 + (dx+dy) * a, self.mapsize[1] + 15 + (dx+dy) * b, dx, dx, str(x), color["lime"], True, False, 1,
                     ["number", x]])
 
-
-    def show(self):
-        self.screen.fill(self.backscreen)
-        for x in self.obj:
-            x.show()
-        pg.display.update()
-
-    def drawtext(self, screen, X, Y, text, fontsize, color=(0, 0, 0)):
-        font = pg.font.Font("Data\\Font\\arial.ttf", math.floor(fontsize * 1))
-        TextSurf = font.render(text, True, color)
-        TextRect = TextSurf.get_rect()
-        TextRect.center = (X, Y)
-        screen.blit(TextSurf, TextRect)
-
     def update_provs(self):
 
         for x in Facade.provs:
@@ -316,6 +317,19 @@ class Facade:
             return self.connected(id)
         else:
             return id
+
+    def drawtext(self, screen, X, Y, text, fontsize, color=(0, 0, 0)):
+        font = pg.font.Font("Data\\Font\\arial.ttf", math.floor(fontsize * 1))
+        TextSurf = font.render(text, True, color)
+        TextRect = TextSurf.get_rect()
+        TextRect.center = (X, Y)
+        screen.blit(TextSurf, TextRect)
+
+    def show(self):
+        self.screen.fill(self.backscreen)
+        for x in self.obj:
+            x.show()
+        pg.display.update()
 
 ########################################################################################################################
 
