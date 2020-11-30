@@ -5,7 +5,7 @@ def command_int(self, command):
     command[1] = self.whereIam(command[0]) #check where client is
 
 # COMMANDS WHILE IN ALWAYS #############################################################################################
-    if command[2] == "whereIam":
+    if command[2] == "whereIam": #returns name of room player is in
         return command[1]
 # COMMANDS WHILE IN LOBBY ##############################################################################################
     if command[1] == "lobby":

@@ -23,7 +23,6 @@ class Facade:
 
         self.langPack = connect_csv('Data\\Lang\\lang.csv')
         self.langPL = 0
-        print(self.langPack)
         self.mapsize = (0, 0)
         self.mapname = None
         self.myState = -1
@@ -90,7 +89,6 @@ class Facade:
 
         if self.myState == 0:
             self.gameSet = self.command("gameSet")
-            print(self.gameSet)
             for x in range(2):
                 self.gameSet[x] = self.langPack[12+x][self.langPL] + ": " + self.langPack[20 - int(self.gameSet[x])][self.langPL]
             for x in range(5):

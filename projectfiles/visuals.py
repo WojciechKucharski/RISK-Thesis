@@ -21,7 +21,11 @@ def visuals_update(self):
         i = 0
         if rooms is not False:
             for x in rooms:
-                self.addButton([100, 300 + 75 * i, 800, 50, x, color["green"], True, False, 3, ["join", x]])
+                if self.langPL == 1:
+                    X = self.langPack[21][1] + x
+                else:
+                    X = x + self.langPack[21][0]
+                self.addButton([100, 300 + 75 * i, 800, 50, X, color["green"], True, False, 3, ["join", x]])
                 i += 1
     elif s in range(10):
         display_players(self)
