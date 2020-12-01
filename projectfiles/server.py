@@ -28,7 +28,6 @@ def threaded_client(conn, addr): #connection thread
             if not data: #if something is wrong with data, break loop
                 break
             else:
-                data[0] = data[0] +" [" + str(id) +"]"
                 pass
             conn.sendall(pickle.dumps(G.command(data))) #send respond to client
         except Exception as e: #if client disconnects, break loop
