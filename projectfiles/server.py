@@ -4,10 +4,11 @@ import pickle
 from game import *
 from users import *
 
+maxUsers = 10
 server = "" #read ip from sys
 port = 5555
 G = lobby() #create lobby
-U = Users() #users class
+U = Users(maxUsers)
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 try:
@@ -15,25 +16,25 @@ try:
 except socket.error as e:
     print(str(e))
 
-s.listen(10) #connections
+s.listen(maxUsers) #connections
 print("Waiting for connection, Server Started")
 
 def threaded_client(conn, addr): #connection thread
     conn.send(pickle.dumps(True)) #respond when first connected
-    print(addr[0])
+    id = U.join(addr[0])
     while True:
         try:
             data = pickle.loads(conn.recv(2048)) #recive command from client
             if not data: #if something is wrong with data, break loop
                 break
             else:
-                nick = data[0]
+                data[0] = data[0] +" [" + str(id) +"]"
                 pass
             conn.sendall(pickle.dumps(G.command(data))) #send respond to client
         except Exception as e: #if client disconnects, break loop
             print(e)
             break
-    print(nick + " lost connection")
+    U.leave(addr[0])
     conn.close() #close connection
 
 while True:
