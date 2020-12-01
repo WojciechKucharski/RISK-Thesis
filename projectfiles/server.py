@@ -16,8 +16,9 @@ except socket.error as e:
 s.listen(10) #connections
 print("Waiting for connection, Server Started")
 
-def threaded_client(conn): #connection thread
+def threaded_client(conn, addr): #connection thread
     conn.send(pickle.dumps(True)) #respond when first connected
+    print(addr)
     while True:
         try:
             data = pickle.loads(conn.recv(2048)) #recive command from client
@@ -35,5 +36,5 @@ def threaded_client(conn): #connection thread
 while True:
     conn, addr = s.accept()
     print("Connected to: ", addr)
-    start_new_thread(threaded_client, (conn,))
+    start_new_thread(threaded_client, (conn, addr))
 
