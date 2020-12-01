@@ -6,15 +6,15 @@ import math
 
 class lobby:
     def __init__(self):
-        self.rooms = []
+        self.rooms = [] #init lobby object with empty room list
 
-    def command(self, command):
+    def command(self, command): #PROXY: handle command in another file
         return command_int(self, command)
 
-    def create_room(self, creator):
-        self.rooms.append(game(creator))
+    def create_room(self, creator): #creates new room in lobby
+        self.rooms.append(game(creator)) #appends roomlist, setting command sender as creator
 
-    def index(self, room_name):
+    def index(self, room_name): #returns index of room according to room name
         i = 0
         for x in self.rooms:
             if x.creator == room_name:
@@ -22,7 +22,7 @@ class lobby:
             else:
                 i+=1
 
-    def whereIam(self, nick):
+    def whereIam(self, nick): #returns name of room user is in
         if len(self.rooms) == 0:
             return "lobby"
         else:
@@ -31,7 +31,7 @@ class lobby:
                     return x.creator
             return "lobby"
 
-    def clear_rooms(self):
+    def clear_rooms(self): #clears empty rooms
         for x in self.rooms:
             if len(x.players) == 0:
                 self.rooms.remove(x)

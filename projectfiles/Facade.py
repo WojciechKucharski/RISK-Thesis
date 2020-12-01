@@ -182,7 +182,7 @@ class Facade:
             comm.append(input)
         return self.net.send(comm)
 
-    def reset(self):
+    def reset(self): #reset buttons
         self.backscreen = color["beige"]
         Facade.butts = []
         Facade.players_list = []
@@ -215,11 +215,11 @@ class Facade:
                     comm = ["provClick", x.id]
             self.command(comm)
 
-    def loadmap(self):
-        self.formatMap()
-        self.addImage('Data\\Maps\\' + self.mapname + '\\' + self.mapname + '.jpg')
+    def loadmap(self): #load map
+        self.formatMap() #remove old map
+        self.addImage('Data\\Maps\\' + self.mapname + '\\' + self.mapname + '.jpg') #load map image
         self.mapsize = list(self.images[0].img.get_size())
-        for x in connect_csv('Data\\Maps\\' + self.mapname + '\\' + self.mapname + '.csv'):
+        for x in connect_csv('Data\\Maps\\' + self.mapname + '\\' + self.mapname + '.csv'): #load provinces
             self.addProvince(x)
 
     def rolls(self, roll):
@@ -252,14 +252,14 @@ class Facade:
             time.sleep(1)
         time.sleep(1)
 
-    def renderNumbers(self, NO):
+    def renderNumbers(self, NO): #render numbers from units -1 from given prov ID
         if Facade.provs[NO].units == 1:
             self.command(["number", 0])
         else:
             for x in range(Facade.provs[NO].units):
                 dx = 20
                 dy = 2
-                a = x % 35
+                a = x % 35 #matrix coords, 35 in row
                 b = x // 35
                 self.addButton(
                     [15 + (dx+dy) * a, self.mapsize[1] + 15 + (dx+dy) * b, dx, dx, str(x), color["lime"], True, False, 1,
@@ -306,7 +306,7 @@ class Facade:
         else:
             pass
 
-    def connected(self, id):
+    def connected(self, id): #method to list all provs connected to each other owned by user
         new = False
         for x in id:
             for y in Facade.provs[x].con:
@@ -321,36 +321,36 @@ class Facade:
         else:
             return id
 
-    def drawtext(self, screen, X, Y, text, fontsize, color=(0, 0, 0)):
-        font = pg.font.Font("Data\\Font\\arial.ttf", math.floor(fontsize * 1))
+    def drawtext(self, screen, X, Y, text, fontsize, color=(0, 0, 0)): #draw text, method for objects
+        font = pg.font.Font("Data\\Font\\arial.ttf", math.floor(fontsize * 1)) #load font
         TextSurf = font.render(text, True, color)
         TextRect = TextSurf.get_rect()
         TextRect.center = (X, Y)
         screen.blit(TextSurf, TextRect)
 
-    def show(self):
-        self.screen.fill(self.backscreen)
-        for x in self.obj:
+    def show(self): #show Facade content
+        self.screen.fill(self.backscreen) #reset window
+        for x in self.obj: #display all objects
             x.show()
-        pg.display.update()
+        pg.display.update() #update pygame display
 
 ########################################################################################################################
 
-class button(Facade):
+class button(Facade): #button object
     def __init__(self, recipe): #X, Y, dx, dy, text, color = (128, 128, 128), clickable = True, textonly = False, font_amp = 1, comm = None
-        self.X = recipe[0]
-        self.Y = recipe[1]
-        self.dx = recipe[2]
-        self.dy = recipe[3]
-        self.text = recipe[4]
-        self.color = recipe[5]
-        self.clickable = recipe[6]
-        self.textonly = recipe[7]
-        self.font_amp = recipe[8]
-        self.comm_c = recipe[9]
+        self.X = recipe[0] #coor of left corner x
+        self.Y = recipe[1] #coor of left corner y
+        self.dx = recipe[2] #width
+        self.dy = recipe[3] #height
+        self.text = recipe[4] #text on button
+        self.color = recipe[5] #color of button
+        self.clickable = recipe[6] #clickable?
+        self.textonly = recipe[7] #if true, displays only text
+        self.font_amp = recipe[8] #font amplifier if necessary
+        self.comm_c = recipe[9] #command to send to server if button is clicked
 
     @property
-    def comm(self):
+    def comm(self): #returns command, returns none if not clickable
         if self.clickable:
             return self.comm_c
         else:
@@ -367,9 +367,9 @@ class button(Facade):
         return False
 
     def show(self): #drawing button
-        if self.isOver:
+        if self.isOver: #if mause is over, border white
             border = color["white"]
-        else:
+        else: #else, border is black
             border = color["black"]
         if self.textonly:
             pass
@@ -381,38 +381,39 @@ class button(Facade):
 ########################################################################################################################
 
 class province(Facade):
-    def __init__(self, data):
-        self.name = str(data[0])
-        self.id = int(data[1])
-        self.X = int(data[2])
-        self.Y = int(data[3])
-        self.cont = str(data[6])
-        self.bonus = int(data[7])
-        self.con = list(map(int, data[8:-1]))
-        self.HL = False
+    def __init__(self, data): #create object according to .csv file
+        self.name = str(data[0]) #name of province
+        self.id = int(data[1]) #id of province
+        self.X = int(data[2]) # X coord
+        self.Y = int(data[3]) # Y coord
+        self.cont = str(data[6]) #continent prov. belongs to
+        self.bonus = int(data[7]) #continent bonus
+        self.con = list(map(int, data[8:-1])) #id's of prov.'s prov. is connected to
+        self.HL = False #highlight constantely
         self.clickable = True
-        self.col = None
-        self.av = False
+        self.col = None #color
+        self.av = False #"always visible"
 
-        self.owner = None
-        self.units = None
+        #to read from server
+        self.owner = None #owner of prov.
+        self.units = None #units in prov
 
-    def getColor(self):
+    def getColor(self): #gives color, returns GRAY if none is given
         if self.col == None:
             return color["gray"]
         else:
             return self.col
 
     @property
-    def comm(self):
+    def comm(self): #return command if clicked and if clickable and if visible
         if self.clickable and self.visible:
-            return self.id
+            return self.id #the command is prov's ID
         else:
             return None
 
     @property
-    def isOver(self):
-        if self.clickable is False:
+    def isOver(self): #return TRUE if cursor is over
+        if self.clickable is False: #instantely return false if not visible or not clickable
             return False
         if self.visible is False:
             return False
@@ -426,61 +427,61 @@ class province(Facade):
             return False
 
     @property
-    def visible(self):
-        if self.av:
+    def visible(self): #returns if prov is visible
+        if self.av: #if prov is always visible returns TRUE
             return True
-        if self.owner == Facade.nick:
+        if self.owner == Facade.nick: #if prov is owned by user return TRUE
             return True
-        for x in self.con:
+        for x in self.con: #if prov. is near prov owned by user return TRUE
             if Facade.provs[x].owner == Facade.nick:
                 return True
         else:
             return False
 
     @property
-    def unitsDIS(self):
-        if self.units == None:
+    def unitsDIS(self): #return units to display as STRING
+        if self.units == None: #return "?" if no information given
             return "?"
         else:
             return str(self.units)
 
-    def show(self):
+    def show(self): #shows province if visible
         if self.visible:
             self.show2()
 
-    def show2(self):
-        border = color["black"]
+    def show2(self): #draws province
+        border = color["black"] #border black as default
         if self.HL:
-            border = color["beige"]
+            border = color["beige"] #if province is higlightet then beige
         if self.isOver:
-            border = color["white"]
+            border = color["white"] #if cursor is over, border is white
         pg.draw.circle(Facade.screen,
                        self.getColor(),
                        (int(self.X*self.scale), int(self.Y*self.scale)),
-                       int(19*self.scale), 0)
+                       int(19*self.scale), 0) #display inside of circle
 
         pg.draw.circle(Facade.screen, border,
                        (int(self.X*self.scale),
                         int(self.Y*self.scale)), int(20*self.scale),
-                       int(3*self.scale))
+                       int(3*self.scale)) #display border
 
         self.drawtext(Facade.screen,
                  int(self.X*self.scale), int(self.Y*self.scale),
-                 str(self.unitsDIS), 12*self.scale)
+                 str(self.unitsDIS), 12*self.scale) #display units
 ########################################################################################################################
 
 class image(Facade):
     def __init__(self, path):
-        self.img = pg.image.load(path)
-        self.size = list(self.img.get_size())
+        self.img = pg.image.load(path) #loads image from given path
+        self.size = list(self.img.get_size()) #reads size of image
 
     def show(self):
-        temp_img = self.img.copy()
-        temp_img = pg.transform.scale(temp_img, (int(self.scale * self.size[0]), int(self.scale * self.size[1])))
-        Facade.screen.blit(temp_img, (0, 0))
+        temp_img = self.img.copy() #copy image to not lose quality from resizing
+        temp_img = pg.transform.scale(temp_img, (int(self.scale * self.size[0]), int(self.scale * self.size[1]))) #resize image according to scale
+        Facade.screen.blit(temp_img, (0, 0)) #display image
 
     @property
-    def isOver(self):
+    def isOver(self): #always return false, because image is not clickable
         return False
 
 
