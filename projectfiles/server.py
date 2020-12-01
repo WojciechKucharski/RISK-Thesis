@@ -17,6 +17,7 @@ s.listen(10) #connections
 print("Waiting for connection, Server Started")
 
 def threaded_client(conn, addr): #connection thread
+    nick = None
     conn.send(pickle.dumps(True)) #respond when first connected
     print(addr)
     while True:
@@ -25,12 +26,13 @@ def threaded_client(conn, addr): #connection thread
             if not data: #if something is wrong with data, break loop
                 break
             else:
+                nick = data[0]
                 pass
             conn.sendall(pickle.dumps(G.command(data))) #send respond to client
         except Exception as e: #if client disconnects, break loop
             print(e)
             break
-    print("Lost connection")
+    print(nick + " lost connection")
     conn.close() #close connection
 
 while True:
