@@ -2,10 +2,12 @@ import socket
 from _thread import *
 import pickle
 from game import *
+from users import *
 
 server = "" #read ip from sys
 port = 5555
 G = lobby() #create lobby
+U = Users() #users class
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 try:
@@ -17,9 +19,8 @@ s.listen(10) #connections
 print("Waiting for connection, Server Started")
 
 def threaded_client(conn, addr): #connection thread
-    nick = None
     conn.send(pickle.dumps(True)) #respond when first connected
-    print(addr)
+    print(addr[0])
     while True:
         try:
             data = pickle.loads(conn.recv(2048)) #recive command from client
