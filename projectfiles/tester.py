@@ -31,7 +31,7 @@ def testServer(N):
     for _ in range(N):
         start_new_thread(createTester, ())
 
-testServer(200)
+testServer(900)
 
 while True:
     x = tester()
