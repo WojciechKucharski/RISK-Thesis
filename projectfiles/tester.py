@@ -6,7 +6,7 @@ import random
 class tester:
     def __init__(self):
         self.net = self.connect()
-        self.nick = str(random.randint(999, 999999999))
+        self.nick = str(random.randint(1, 9999999))
 
     def connect(self):
         while True:  # try connect till success
@@ -19,21 +19,25 @@ class tester:
             else:
                 print("Failed to connect")
 
-    def command(self):
+    def test(self):
         self.net.send([self.nick, "room", "roomlist"])
 
 
-def createTester(freq):
+def createTester(freq = 100):
     print("created tester")
     x = tester()
+    t1 = time.time()
     while True:
-        x.command()
+        t2 = time.time()
+        if t2 - t1 > 1/freq:
+            t1 = t2
+            x.test()
 
-def testServer(N, freq):
+def testServer(N = 5, freq = 10):
     for _ in range(N):
         start_new_thread(createTester (freq, ))
 
-testServer(95, 1)
+testServer(2, 10)
 
 while True:
     pass
