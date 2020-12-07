@@ -8,7 +8,6 @@ maxUsers = 1000
 server = "" #read ip from sys
 port = 5555
 G = lobby() #create lobby
-U = Users(maxUsers)
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 try:
@@ -21,7 +20,6 @@ print("Waiting for connection, Server Started")
 
 def threaded_client(conn, addr): #connection thread
     conn.send(pickle.dumps(True)) #respond when first connected
-    id = U.join(addr[0])
     while True:
         try:
             data = pickle.loads(conn.recv(2048)) #recive command from client
@@ -33,7 +31,6 @@ def threaded_client(conn, addr): #connection thread
         except Exception as e: #if client disconnects, break loop
             print(e)
             break
-    U.leave(addr[0])
     conn.close() #close connection
 
 while True:
