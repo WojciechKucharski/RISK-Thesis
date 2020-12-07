@@ -19,7 +19,7 @@ class tester:
                 print("Failed to connect")
 
     def test(self):
-        self.net.send([self.nick, "room", "whereIam"])
+        self.net.send([self.nick, "room", "test"])
 
 
 def createTester():
