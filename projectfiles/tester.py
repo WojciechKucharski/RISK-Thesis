@@ -13,9 +13,8 @@ class tester:
             with open('Data\\ip.txt') as f:  # read ip from file
                 x = f.readline()
             net = Network(x, 5555)
-            if net.connected:  # try to connect
-                print("Connected to: ", x)
-                return net  # if connected, return Network object
+            if net.connected:
+                return net
             else:
                 print("Failed to connect")
 
@@ -24,7 +23,6 @@ class tester:
 
 
 def createTester(freq = 100):
-    print("created tester")
     x = tester()
     t1 = time.time()
     while True:
@@ -35,9 +33,9 @@ def createTester(freq = 100):
 
 def testServer(N = 5, freq = 10):
     for _ in range(N):
-        start_new_thread(createTester (freq, ))
+        start_new_thread(createTester, (freq, ))
 
-testServer(2, 10)
+testServer(95, 1000000)
 
 while True:
     pass
