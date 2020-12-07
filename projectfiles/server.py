@@ -4,7 +4,7 @@ import pickle
 from game import *
 from users import *
 
-maxUsers = 100
+maxUsers = 1000
 server = "" #read ip from sys
 port = 5555
 G = lobby() #create lobby

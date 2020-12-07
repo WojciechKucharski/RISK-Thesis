@@ -23,17 +23,17 @@ class tester:
         self.net.send([self.nick, "room", "roomlist"])
 
 
-def testing(freq):
+def createTester(freq):
     print("created tester")
     x = tester()
     while True:
         x.command()
 
-def doaTest(N, freq):
+def testServer(N, freq):
     for _ in range(N):
-        start_new_thread(testing, (freq, ))
+        start_new_thread(createTester (freq, ))
 
-doaTest(8, 1)
+testServer(95, 1)
 
 while True:
     pass
