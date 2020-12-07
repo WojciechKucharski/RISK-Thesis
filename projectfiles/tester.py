@@ -19,23 +19,24 @@ class tester:
                 print("Failed to connect")
 
     def test(self):
-        self.net.send([self.nick, "room", "roomlist"])
+        self.net.send([self.nick, "room", "whereIam"])
 
 
-def createTester(freq = 100):
+def createTester():
     x = tester()
-    t1 = time.time()
     while True:
-        t2 = time.time()
-        if t2 - t1 > 1/freq:
-            t1 = t2
-            x.test()
+        x.test()
 
-def testServer(N = 5, freq = 10):
+def testServer(N):
     for _ in range(N):
-        start_new_thread(createTester, (freq, ))
+        start_new_thread(createTester, ())
 
-testServer(95, 1000000)
+testServer(200)
 
 while True:
-    pass
+    x = tester()
+    t1 = time.time()
+    x.test()
+    t2 = time.time() - t1
+
+    print(t2)

@@ -2,6 +2,12 @@ def command_int(self, command):
     if len(command) <= 1: #check if command structure is wrong
         print("Error")
         return False
+    if command[2] == "test":
+        X = []
+        for _ in range(100):
+            X.append(123)
+        X = []
+        return True
     command[1] = self.whereIam(command[0]) #check where client is
 
 # COMMANDS WHILE IN ALWAYS #############################################################################################
