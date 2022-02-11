@@ -20,8 +20,11 @@ https://en.wikipedia.org/wiki/Risk_(game)
 ```
 # Screenshots
 ## Game Rooms
+Player can set nickname, create room or join room
 ![alt text](https://github.com/WojciechKucharski/RISK-Thesis/blob/main/pics/lobby.jpg)
-## In lobby, before game
-![alt text](https://github.com/WojciechKucharski/RISK-Thesis/blob/main/pics/fow.JPG)
-## During game
+## In lobby
+Lobby before game, creator can choose rules or kick players
 ![alt text](https://github.com/WojciechKucharski/RISK-Thesis/blob/main/pics/scale.JPG)
+## During game
+Two windows are visible, each one is for other player
+![alt text](https://github.com/WojciechKucharski/RISK-Thesis/blob/main/pics/fow.JPG)
