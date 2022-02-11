@@ -12,6 +12,7 @@
 ### Server
 * Ubuntu 20.04 LTS
 * Socket Server
+* TCP/IP
 # Inspiration
 * `RISK` - popular board game
 ```
