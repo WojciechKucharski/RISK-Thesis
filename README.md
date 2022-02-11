@@ -26,5 +26,5 @@ Player can set nickname, create room or join room
 Lobby before game, creator can choose rules or kick players
 ![alt text](https://github.com/WojciechKucharski/RISK-Thesis/blob/main/pics/scale.JPG)
 ## During game
-Two windows are visible, each one is for other player
+Two windows are visible, each one is for uniqe player
 ![alt text](https://github.com/WojciechKucharski/RISK-Thesis/blob/main/pics/fow.JPG)
