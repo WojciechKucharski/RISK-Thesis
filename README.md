@@ -18,8 +18,10 @@
 ```
 https://en.wikipedia.org/wiki/Risk_(game)
 ```
-# Release
-## .rar file uploaded to Google Drive
-
-
-* [Download link](https://drive.google.com/drive/folders/11qI3wynBbD1d4OHkaUcle_-sRMUhHId_?usp=sharing)
+# Screenshots
+## Game Rooms
+![alt text](https://github.com/WojciechKucharski/RISK-Thesis/blob/main/pics/lobby.jpg)
+## In lobby, before game
+![alt text](https://github.com/WojciechKucharski/RISK-Thesis/blob/main/pics/fow.JPG)
+## During game
+![alt text](https://github.com/WojciechKucharski/RISK-Thesis/blob/main/pics/scale.JPG)
